@@ -1,0 +1,17 @@
+{
+  "name": "bazarsooApp",
+  "authors": [
+    "Mohsen Esmaeli <m-esm@hotmail.com>"
+  ],
+  "description": "bazarsoo app",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

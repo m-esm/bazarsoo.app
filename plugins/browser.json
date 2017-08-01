@@ -1,0 +1,76 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-battery-status": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-media-capture": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-contacts": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-device-motion": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-device-orientation": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-globalization": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-media": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-vibration": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.comon"
+        }
+    },
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.comon"
+        }
+    }
+}
