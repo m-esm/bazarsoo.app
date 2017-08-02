@@ -1,6 +1,15 @@
 ﻿<!DOCTYPE html>
 <html ng-app="bazarsoo">
 <head>
+
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#f2ede0">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#f2ede0">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#f2ede0">
+
+
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
@@ -19,12 +28,15 @@
     <link href="vendors/bower_components/reset-css/reset.css" rel="stylesheet" />
     <link href="vendors/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="vendors/bower_components/angular/angular-csp.css" rel="stylesheet" />
-    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/app.css?ran=3" rel="stylesheet" />
+
     <title>Bazarsoo</title>
+
 </head>
 <body>
+    <header>
 
-
+    </header>
     <ng-view></ng-view>
 
     <footer>
@@ -33,7 +45,7 @@
 
                 <li class="{{location.path() == '/home' ? 'active':''}}">
                     <a ng-click="location.path('home')">
-                        <img src="img/icon_on.png" />
+                      <div class="logo"></div>
                     </a>
                 </li>
 

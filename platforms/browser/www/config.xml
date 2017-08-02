@@ -10,8 +10,8 @@
     <description>
     </description>
     <author email="info@bazarsoo.com" href="http://bazarsoo.com">
-         Bazarsoo
-    </author>
+    Bazarsoo
+  </author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

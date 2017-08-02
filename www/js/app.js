@@ -1,60 +1,131 @@
 ﻿/// <reference path="../vendors/bower_components/angular/angular.js" />
 
 
+phoneService = false;
+
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+
+
+    $('body').addClass('phonegap').addClass(device.platform);
+    phoneService = {};
+    phoneService.vibrate = navigator.vibrate;
+    
+}
+
 $(function () {
 
 
-  
 
+    var vibTimeout = 0;
+    var littleVibTimeout = 0;
     $(document).on('touchstart mousedown', '.v-block .more', function (e) {
 
-        $('.v-block .more .icon').hide();
+        vibTimeout = setTimeout(function () {
 
-        $('.icon', this).show();
+            phoneService.vibrate(30);
+
+        }, 300);
+
+        $('.v-block').not($(e.target).parents('.v-block')).addClass('transparent');
+        $(e.target).parents('.v-block').addClass('touchstart');
+
+        $('.v-block .icon').removeClass('active');
+
+
+
+        $('.icon', $(e.target).parents('.v-block')).addClass('show');
 
         blockTouchScroll = true;
 
         e.preventDefault();
+
         var start = {
             x: e.originalEvent.touches[0].clientX,
             y: e.originalEvent.touches[0].clientY
         };
-     
-        //.parents('.v-block')
-        $(e.target).on('touchmove mousemove', function (e) {
+        var lastActive;
+        var onMove = function (e) {
+
 
             var end = {
-                x: e.originalEvent.touches[0].clientX,
-                y: e.originalEvent.touches[0].clientY
+                x: e.clientX ? e.clientX : e.originalEvent.touches[0].clientX,
+                y: e.clientY ? e.clientY : e.originalEvent.touches[0].clientY
             };
- 
+
+            var line = (start.x - end.x) + (start.y - end.y);
+
+
+
+            if (line < 20) {
+
+
+                $('.v-block .icon').removeClass('active');
+
+                return;
+
+            }
+
             var m = (end.y - start.y) / (end.x - start.x);
-         
-
-            $('.v-block .more .icon').removeClass('active');
-
-
-         
-
-            if (m > 2 || m < -1 )
-                $('.icon-1', e.target).addClass('active');
-
-            if (m < 2 && m > 0.5)
-                $('.icon-2', e.target).addClass('active');
-
-
-            if (m < 0.5 && m > -1)
-                $('.icon-3', e.target).addClass('active');
 
 
 
+            $('.v-block .icon').removeClass('active');
 
-        });
+            function then(icon) {
+                lastActiveIndex = 0;
+                if (lastActive)
+                    lastActiveIndex = lastActive.index();
+
+
+                lastActive = $(icon, $(e.target).parents('.v-block')).addClass('active');
+               
+                
+                if (lastActiveIndex != lastActive.index())
+                    littleVibTimeout = setTimeout(function () {
+
+                        if (phoneService)
+                            phoneService.vibrate(30);
+
+                    },100);
+
+            }
+
+            if (m < 1.4 && m > 0.53) {
+                then('.icon-2');
+            }
+
+            if (m > 2 || m < -1) {
+                then('.icon-1');
+            }
+
+            if (m < 0.5 && m > -1) {
+                then('.icon-3');
+            }
+
+
+
+        };
+        //.parents('.v-block')
+
+        $(e.target).on('touchmove mousemove', onMove);
+
+
+
 
         $(e.target).on('mouseup mouseout touchend', function (e) {
             $('.v-block .more').unbind('mousemove');
-            $('.v-block .more .icon').hide();
+            $('.v-block  .icon').removeClass('show');
 
+            $(e.target).parents('.v-block').removeClass('touchstart');
+            $('.v-block').removeClass('transparent');
+            clearTimeout(vibTimeout);
+
+            //do stuff
+
+
+            //then
+            $('.v-block  .icon').removeClass('active');
         });
 
 
@@ -221,6 +292,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http) {
         $rootScope.windowWidth = window.innerWidth;
         $rootScope.$apply();
     });
+
     $rootScope.location = $location;
 
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
@@ -231,7 +303,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http) {
             requireLogin = next.data.requireLogin;
 
             if (requireLogin && !localStorage.user) {
-              
+
                 // no logged user, we should be going to #login
                 if (next.templateUrl == "views/auth.html") {
                     // already going to #login, no redirect needed
