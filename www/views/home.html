@@ -1,16 +1,68 @@
 ﻿<div id="home">
 
-    <div class="v-column" ng-repeat="column in columns">
-        
-        <div class="v-block v-h-{{vitrin.BlockCount}}" ng-repeat="vitrin in column">
 
-         
+    <div ng-show="vitrin">
+
+        <div id="vitrin">
+
+
+            <div class="v-block" data-id="{{vitrin.Id}}">
+
+
+                <div class="inner">
+                    <img ng-src="{{vitrin.BannerImage}}" />
+
+                    <div class="more">
+
+                    </div>
+
+                    <div class="icon icon-1">
+                        <i class="fa fa-comment-o"></i>
+                    </div>
+
+                    <div class="icon icon-3">
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="products">
+
+                <div ng-repeat="column in vitrin.productColumns" class="product-column">
+                    <div ng-repeat="product in column" class="product" data-rid="{{product.rid}}">
+                        <div class="inner"  ng-click="goProduct(product)">
+                            <img ng-src="http://bazarsoo.com/{{product.image}}" />
+                            <div class="info">
+                                <h3>
+                                    {{product.name}}
+                                </h3>
+                                <p>
+                                    {{product.description}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div ng-hide="location.hash()" class="v-column" ng-repeat="column in columns">
+
+        <div class="v-block v-h-{{vitrin.BlockCount}}" data-id="{{vitrin.Id}}" ng-repeat="vitrin in column">
+
+
             <div class="inner" style="background-image:url('{{vitrin.BannerImage}}')">
 
-
                 <div class="more">
-
-
 
                 </div>
 
@@ -29,6 +81,6 @@
         </div>
 
     </div>
-  
+
 
 </div>

@@ -6,6 +6,9 @@
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset;
+}
 body,
 input,
 select,
@@ -13,15 +16,76 @@ textarea,
 button {
   font-family: 'IRANSansWeb';
 }
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+#account {
+  text-align: right;
+  direction: rtl;
+}
+#account h1 {
+  font-size: 16px;
+  padding: 20px;
+  font-weight: bold;
+}
+#account ul {
+  padding: 0 20px;
+}
+#account ul li {
+  font-size: 12px;
+  line-height: 40px;
+  padding: 0 10px;
+  border-bottom: 2px solid #eee;
+}
+#account ul li.logout {
+  background: #d35353;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  border: 1px solid red;
+  text-align: center;
+}
+#account ul li:last-child {
+  border-bottom: none;
+}
 #auth {
   width: 440px;
   max-width: 100%;
   margin: 0 auto;
-  background: #fff;
+  background: rgba(128, 128, 128, 0.8);
   color: #444;
   overflow: hidden;
   box-sizing: border-box;
-  padding-top: 80px;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+#auth .error {
+  background: #d35353;
+  color: #fff;
+  border: 1px solid red;
+  margin: 0 10px;
+  line-height: 30px;
+  padding: 0 10px;
+  border-radius: 5px;
+}
+#auth .inner {
+  background: rgba(242, 237, 224, 0.95);
+  width: calc(100% - 60px);
+  border-radius: 5px;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+#auth .inner:after {
+  clear: both;
+  content: ' ';
+  display: block;
 }
 #auth .brand {
   width: 200px;
@@ -30,13 +94,16 @@ button {
   border-bottom: none;
   margin-bottom: 30px;
 }
+#auth form {
+  text-align: right;
+}
 #auth form h2 {
   line-height: 40px;
   padding: 0 10px;
   font-size: 16px;
   font-weight: bold;
-  color: #777;
-  border-bottom: 1px solid #ff6a00;
+  color: #07786e;
+  border-bottom: 1px solid #07baab;
 }
 #auth form h2 i {
   vertical-align: middle;
@@ -55,21 +122,21 @@ button {
   border: none;
   padding: 0 15px;
   border-radius: 5px;
-  background: #fd7819;
+  background: #07baab;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
 }
 #auth form button.login i,
 #auth form button.register i {
-  color: #333;
+  color: #fff;
   vertical-align: middle;
 }
 #auth form button.register {
-  background: #fd7819;
+  background: #07baab;
 }
 #auth form .links {
-  color: #777;
+  color: #07baab;
   float: left;
 }
 #auth form .links a {
@@ -86,14 +153,15 @@ button {
 #auth .input-group i,
 #auth .input-group input {
   float: left;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   vertical-align: top;
   box-sizing: border-box;
-  line-height: 30px;
   border: none;
-  background: #f1efef;
+  background: #fff;
   border: 1px solid #ccc;
+  outline: none;
 }
 #auth .input-group input {
   border-left: none;
@@ -102,15 +170,18 @@ button {
   border-radius: 0 5px 5px 0;
 }
 #auth .input-group input.ng-invalid {
-  border-bottom-color: red;
+  /*box-shadow:0 0 1px red inset;*/
 }
 #auth .input-group i {
   border-radius: 5px 0 0 5px;
   text-align: center;
   border-right: none;
+  background: #07baab;
+  color: #fff;
+  font-size: 16px;
 }
 #auth .input-group input {
-  width: calc(100% - 30px);
+  width: calc(100% - 40px);
 }
 body {
   -webkit-touch-callout: none;
@@ -149,14 +220,55 @@ header {
   border: none !important;
 }
 body.iOS header {
-  display: block!important;
+  display: block !important;
 }
 body.iOS #home {
   padding: 30px 0;
 }
+#vitrin .v-block {
+  max-width: 400px;
+  width: calc(100% - 30px);
+  margin: 15px auto;
+  background-color: #f2ede0;
+}
+#vitrin .products {
+  text-align: center;
+}
+#vitrin .products .product-column {
+  width: 180px;
+  display: inline-block;
+  vertical-align: top;
+}
+#vitrin .products .product {
+  position: relative;
+  vertical-align: top;
+}
+#vitrin .products .product .inner {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f2ede0;
+}
+#vitrin .products .product img {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  background: #fff;
+}
+#vitrin .products .product .info {
+  text-align: center;
+  line-height: 18px;
+}
+#vitrin .products .product .info h3 {
+  font-weight: bold;
+}
+#vitrin .products .product .info p {
+  direction: rtl;
+  font-size: 11px;
+}
 #home {
   text-align: center;
-  padding-bottom: 60px!important;
+  padding-bottom: 60px !important;
 }
 #home .v-column {
   width: 180px;
@@ -180,7 +292,8 @@ body.iOS #home {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  border-radius: 5px;
+  border-radius: 5px !important;
+  overflow: hidden;
   position: relative;
 }
 #home .v-block .inner .icon {

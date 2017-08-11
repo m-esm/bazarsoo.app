@@ -1,9 +1,35 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <title>account</title>
-</head>
-<body>
-    
-</body>
-</html>
+﻿
+
+<div id="account">
+
+    <h1>
+        حساب کاربری
+    </h1>
+    <ul class="nav nav-tabs" role="tablist">
+
+        <li>
+            لیست کالاهای انتخابی
+            ({{userService.favorites ? userService.favorites.length : 0}})
+        </li>
+
+        <li>
+            لیست فاکتورها
+            ({{userService.invoices ? userService.invoices.length : 0}})
+        </li>
+
+        <li>
+            لیست علاقه مندی ها
+            ({{userService.cart ? userService.cart.length : 0}})
+        </li>
+
+        <li> پروفایل من</li>
+
+        <li>تغییر رمز</li>
+
+        <li class="logout" ng-click="logout()">
+            خروج از حساب کاربری
+        </li>
+
+    </ul>
+
+</div>

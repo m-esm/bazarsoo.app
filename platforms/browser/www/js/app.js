@@ -4,14 +4,19 @@
 phoneService = false;
 
 document.addEventListener("deviceready", onDeviceReady, false);
+
+apiBase = 'http://localhost:56824';
+
 function onDeviceReady() {
 
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};
     phoneService.vibrate = navigator.vibrate;
-    
+
 }
+
+
 
 $(function () {
 
@@ -21,17 +26,17 @@ $(function () {
     var littleVibTimeout = 0;
     $(document).on('touchstart mousedown', '.v-block .more', function (e) {
 
-        vibTimeout = setTimeout(function () {
+        if (phoneService)
+            vibTimeout = setTimeout(function () {
 
-            phoneService.vibrate(30);
+                phoneService.vibrate(30);
 
-        }, 300);
+            }, 300);
 
         $('.v-block').not($(e.target).parents('.v-block')).addClass('transparent');
         $(e.target).parents('.v-block').addClass('touchstart');
 
         $('.v-block .icon').removeClass('active');
-
 
 
         $('.icon', $(e.target).parents('.v-block')).addClass('show');
@@ -41,9 +46,10 @@ $(function () {
         e.preventDefault();
 
         var start = {
-            x: e.originalEvent.touches[0].clientX,
-            y: e.originalEvent.touches[0].clientY
+            x: e.clientX ? e.clientX : e.originalEvent.touches[0].clientX,
+            y: e.clientY ? e.clientY : e.originalEvent.touches[0].clientY
         };
+
         var lastActive;
         var onMove = function (e) {
 
@@ -79,15 +85,15 @@ $(function () {
 
 
                 lastActive = $(icon, $(e.target).parents('.v-block')).addClass('active');
-               
-                
+
+
                 if (lastActiveIndex != lastActive.index())
                     littleVibTimeout = setTimeout(function () {
 
                         if (phoneService)
                             phoneService.vibrate(30);
 
-                    },100);
+                    }, 100);
 
             }
 
@@ -114,18 +120,51 @@ $(function () {
 
 
         $(e.target).on('mouseup mouseout touchend', function (e) {
+
+            var vBlock = $(e.target).parents('.v-block');
+            vBlock.removeClass('touchstart');
+
             $('.v-block .more').unbind('mousemove');
             $('.v-block  .icon').removeClass('show');
-
-            $(e.target).parents('.v-block').removeClass('touchstart');
             $('.v-block').removeClass('transparent');
             clearTimeout(vibTimeout);
 
+            var activeIcon = $('.v-block  .icon.active');
             //do stuff
 
+            if (activeIcon.length != 0) {
 
-            //then
+
+                if (activeIcon.hasClass('icon-1')) {
+
+                }
+
+
+                if (activeIcon.hasClass('icon-2')) {
+
+                    window.location.hash = '!/home#' + vBlock.data('id');
+
+                }
+
+
+                if (activeIcon.hasClass('icon-3')) {
+
+                }
+
+            } else {
+
+
+                //then
+
+            }
+
             $('.v-block  .icon').removeClass('active');
+
+
+
+
+
+
         });
 
 
@@ -140,7 +179,7 @@ $(function () {
 
 
 
-var bazarsooAng = angular.module('bazarsoo', ['ngAnimate', 'ngRoute']);
+var bazarsooAng = angular.module('bazarsoo', ['ngAnimate', 'ngRoute', 'ngSanitize']);
 
 
 
@@ -152,9 +191,14 @@ bazarsooAng.factory('authInterceptorService', ['$q', '$location', function ($q, 
 
         config.headers = config.headers || {};
 
-        var authData = localStorage.getItem('token');
+        var authData = localStorage.getItem('user');
+
+
         if (authData) {
-            config.headers.Authorization = 'Bearer ' + authData.token;
+            authData = JSON.parse(authData);
+
+            if (authData.access_token)
+                config.headers.Authorization = 'Bearer ' + authData.access_token;
         }
 
         return config;
@@ -187,6 +231,10 @@ bazarsooAng.config(function ($locationProvider, $httpProvider, $routeProvider) {
             templateUrl: 'views/home.html',
             controller: 'homeController'
         })
+.when('/product', {
+    templateUrl: 'views/product.html',
+    controller: 'productController'
+})
         .when('/search', {
             templateUrl: 'views/search.html',
             controller: 'searchController'
@@ -210,9 +258,119 @@ bazarsooAng.config(function ($locationProvider, $httpProvider, $routeProvider) {
     });
 
 });
+
+bazarsooAng.factory('userService', function ($http, $q) {
+
+    var userServiceFactory = {
+        cart: false,
+        invoices: false,
+        favorites: false,
+        findFavorite: false
+    };
+
+    _findFavorite = function (vid) {
+
+
+
+    };
+    _getInvoices = function () {
+
+
+        var deferred = $q.defer();
+
+        if (userServiceFactory.invoices)
+            deferred.resolve(userServiceFactory.invoices);
+
+
+        $http.post(apiBase + '/vitrin/api/invoices').then(function (res) {
+
+            userServiceFactory.invoices = res.data;
+
+            deferred.resolve(res.data);
+
+
+        }, function (res) {
+            deferred.reject(res);
+        });
+
+        return deferred.promise;
+
+    };
+    _getCart = function () {
+
+
+        var deferred = $q.defer();
+
+        if (userServiceFactory.cart)
+            deferred.resolve(userServiceFactory.cart);
+
+
+        $http.post(apiBase + '/vitrin/api/cart').then(function (res) {
+
+            userServiceFactory.cart = res.data;
+            deferred.resolve(res.data);
+
+        }, function (res) {
+            deferred.reject(res);
+        });
+
+        return deferred.promise;
+
+    };
+    _getFavorites = function () {
+
+
+        var deferred = $q.defer();
+
+        if (userServiceFactory.favorites)
+            deferred.resolve(userServiceFactory.favorites);
+
+
+        $http.post(apiBase + '/vitrin/api/favorites').then(function (res) {
+
+            userServiceFactory.favorites = res.data;
+            deferred.resolve(res.data);
+
+        }, function (res) {
+            deferred.reject(res);
+        });
+
+        return deferred.promise;
+
+    };
+
+    return function () {
+
+        var deferred = $q.defer();
+
+        if (!localStorage.user)
+            deferred.reject();
+        else
+            $q.all(
+               _getInvoices(),
+               _getCart(),
+               _getFavorites()).then(function () {
+
+
+                   userServiceFactory.findFavorite = _findFavorite;
+
+                   deferred.resolve(userServiceFactory);
+
+
+
+               }, function () {
+                   deferred.reject();
+               });
+
+        return deferred.promise;
+
+
+    };
+
+});
+
 bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
-    var serviceBase = 'http://ngauthenticationapi.azurewebsites.net/';
     var authServiceFactory = {};
 
     var _authentication = {
@@ -224,7 +382,7 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
         _logOut();
 
-        return $http.post(serviceBase + 'api/account/register', registration).then(function (response) {
+        return $http.post(apiBase + '/api/account/register', registration).then(function (response) {
             return response;
         });
 
@@ -236,16 +394,17 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
         var deferred = $q.defer();
 
-        $http.post(serviceBase + 'token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
+        $http.post(apiBase + '/token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then(function (res) {
 
-            localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName });
+
+            localStorage.setItem('user', JSON.stringify(res.data));
 
             _authentication.isAuth = true;
             _authentication.userName = loginData.userName;
 
-            deferred.resolve(response);
+            deferred.resolve(res);
 
-        }).error(function (err, status) {
+        }, function (err, status) {
             _logOut();
             deferred.reject(err);
         });
@@ -256,7 +415,7 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
     var _logOut = function () {
 
-        localStorageService.remove('authorizationData');
+        localStorage.removeItem('user');
 
         _authentication.isAuth = false;
         _authentication.userName = "";
@@ -265,8 +424,9 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
     var _fillAuthData = function () {
 
-        var authData = localStorageService.get('authorizationData');
+        var authData = localStorage.getItem('user');
         if (authData) {
+            authData = JSON.parse(authData);
             _authentication.isAuth = true;
             _authentication.userName = authData.userName;
         }
@@ -283,19 +443,43 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 }]);
 
 
-bazarsooAng.run(function ($location, $rootScope, $timeout, $http) {
+bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
+    angLocation = $location;
     $rootScope._ = _;
     $rootScope.moment = moment;
     $rootScope.windowWidth = window.innerWidth;
+
     $(window).resize(function () {
         $rootScope.windowWidth = window.innerWidth;
         $rootScope.$apply();
     });
 
+    $rootScope.setLocation = function (path) {
+
+        $location.path(path);
+        $location.hash('');
+
+    };
     $rootScope.location = $location;
 
+
+    userService().then(function (_userService) {
+
+        $rootScope.userService = _userService;
+        setTimeout(function () {
+            console.log($rootScope.userService);
+
+        }, 5);
+
+    }, function () {
+
+    });
+
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
+
+
+        $rootScope.showAuth = false;
 
         var requireLogin = false;
 
@@ -304,16 +488,22 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http) {
 
             if (requireLogin && !localStorage.user) {
 
-                // no logged user, we should be going to #login
-                if (next.templateUrl == "views/auth.html") {
-                    // already going to #login, no redirect needed
-                } else {
-                    // not going to #login, we should redirect now
-                    $location.path("/auth");
-                }
+
+                $rootScope.showAuth = true;
+                //    $location.path(current);
+                //// no logged user, we should be going to #login
+                //if (next.templateUrl == "views/auth.html") {
+                //    // already going to #login, no redirect needed
+                //} else {
+                //    // not going to #login, we should redirect now
+                //    $location.path("/auth");
+                //}
 
 
+            } else {
             }
+        } else {
+
         }
     });
 
@@ -325,45 +515,6 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http) {
 
 });
 
-bazarsooAng.controller('signupController', ['$scope', '$location', '$timeout', 'authService', function ($scope, $location, $timeout, authService) {
-
-    $scope.savedSuccessfully = false;
-    $scope.message = "";
-
-    $scope.registration = {
-        userName: "",
-        password: "",
-        confirmPassword: ""
-    };
-
-    $scope.signUp = function () {
-
-        authService.saveRegistration($scope.registration).then(function (response) {
-
-            $scope.savedSuccessfully = true;
-            $scope.message = "User has been registered successfully, you will be redicted to login page in 2 seconds.";
-            startTimer();
-
-        },
-         function (response) {
-             var errors = [];
-             for (var key in response.data.modelState) {
-                 for (var i = 0; i < response.data.modelState[key].length; i++) {
-                     errors.push(response.data.modelState[key][i]);
-                 }
-             }
-             $scope.message = "Failed to register user due to:" + errors.join(' ');
-         });
-    };
-
-    var startTimer = function () {
-        var timer = $timeout(function () {
-            $timeout.cancel(timer);
-            $location.path('/login');
-        }, 2000);
-    }
-
-}]);
 
 bazarsooAng.controller('authController', ['$scope', '$location', 'authService', function ($scope, $location, authService) {
 
@@ -394,13 +545,17 @@ bazarsooAng.controller('authController', ['$scope', '$location', 'authService', 
 
     $scope.login = function () {
 
-        authService.login($scope.loginData).then(function (response) {
+        authService.login($scope.loginModel).then(function (res) {
 
-            $location.path('/orders');
+
+            location.reload();
+
+
 
         },
          function (err) {
-             $scope.message = err.error_description;
+             $scope.error = err;
+
          });
     };
 
@@ -415,11 +570,15 @@ bazarsooAng.controller('chatController', function ($scope, $http, $rootScope, $w
 });
 
 
-bazarsooAng.controller('accountController', function ($scope, $http, $rootScope, $window) {
-
+bazarsooAng.controller('accountController', function ($scope, $http, $rootScope, $location, $window, authService) {
+    $scope.logout = function () {
+        authService.logOut();
+        $location.path('home');
+    };
 });
 
-bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $window) {
+bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $window, $location) {
+
 
 
     var getColumns = function () {
@@ -464,20 +623,102 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
 
     };
 
+    var getProductColumns = function () {
+        if (!$scope.vitrin)
+            return;
+
+        var products = $scope.vitrin.products;
+
+        var columnWidth = 180;
+        var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
+
+        var columns = new Array(columnCount);
+
+        var cPointer = 0;
+
+        products.forEach(function (item, index) {
+
+            if (!columns[cPointer])
+                columns[cPointer] = [];
+
+
+            columns[cPointer].push(item);
+
+            if (cPointer < columnCount - 1) {
+
+                cPointer++;
+
+            } else {
+                cPointer = 0;
+
+            }
+
+
+        });
+
+        return columns;
+
+
+
+    };
+
     $rootScope.$watch('windowWidth', function (newVal) {
 
         if ($scope.vitrins)
             $scope.columns = getColumns();
 
+        if ($scope.vitrin)
+            $scope.vitrin.productColumns = getProductColumns();
 
     });
 
-    $http.get('http://bazarsoo.com/vitrin/api/vitrins').then(function (res) {
+    $scope.goProduct = function (product) {
+
+        $location.path('/product');
+        $location.hash(product.rid);
+
+    };
+
+    $http.get(apiBase + '/vitrin/api/vitrins').then(function (res) {
 
         $scope.vitrins = res.data;
 
+        $rootScope.$watch(function () {
+            return $location.hash();
+        }, function (newVal) {
+
+
+            $scope.vitrin = $scope.getVitrin();
+            if ($scope.vitrin)
+                $scope.vitrin.productColumns = getProductColumns();
+
+        });
+
+        $scope.getVitrin = function () {
+            var model = _.find($scope.vitrins, function (item) {
+                return item.Id == $location.hash();
+            });
+            return model;
+        };
 
         $scope.columns = getColumns();
+
+    });
+
+});
+bazarsooAng.controller('productController', function ($scope, $http, $rootScope, $window, $location) {
+
+    $rootScope.$watch(function () {
+        return $location.hash();
+    }, function (newVal) {
+
+        $http.get(apiBase + '/vitrin/ui/product?mobile=true&rid=' + newVal).then(function (res) {
+
+            $scope.productView = res.data;
+
+        }, function () {
+
+        });
 
     });
 

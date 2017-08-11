@@ -7,19 +7,95 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset;
+}
+
 body, input, select, textarea, button {
     font-family: 'IRANSansWeb';
 }
 
+.rtl {
+    direction: rtl;
+    text-align: right;
+}
+#account{
+      text-align:right;
+            direction:rtl;
+    h1{
+        font-size:16px;
+        padding:20px;
+        font-weight:bold;
+    }
+
+   
+    ul{
+        padding:0 20px;
+
+        li{
+            font-size:12px;
+            line-height:40px;
+            padding:0 10px;
+          
+            border-bottom:2px solid #eee;
+
+            &.logout{
+                background:#d35353;
+                color:#fff;
+                border-radius:5px;
+                font-weight:bold;
+                border:1px solid red;
+                text-align:center;
+            }
+            &:last-child{
+                border-bottom:none;
+            }
+
+
+        }
+    }
+
+}
 #auth {
     width: 440px;
     max-width: 100%;
     margin: 0 auto;
-    background: #fff;
+    background: rgba(128, 128, 128, 0.8);
     color: #444;
     overflow: hidden;
     box-sizing: border-box;
-    padding-top: 80px;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+
+    .error{
+        background:#d35353;
+        color:#fff;
+        border:1px solid red;
+        margin:0 10px;
+        line-height:30px;
+        padding:0 10px;
+        border-radius:5px;
+
+    }
+    .inner {
+        background: rgba(242, 237, 224, 0.95);
+        width: calc(~"100% - 60px");
+        border-radius: 5px;
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+        box-sizing: border-box;
+
+        &:after {
+            clear: both;
+            content: ' ';
+            display: block;
+        }
+    }
 
     .brand {
         width: 200px;
@@ -30,8 +106,7 @@ body, input, select, textarea, button {
     }
 
     form {
-
-
+        text-align: right;
 
         &.ng-hide:not(.ng-hiding) {
         }
@@ -41,8 +116,8 @@ body, input, select, textarea, button {
             padding: 0 10px;
             font-size: 16px;
             font-weight: bold;
-            color: #777;
-            border-bottom: 1px solid #ff6a00;
+            color: #07786e;
+            border-bottom: 1px solid #07baab;
 
             i {
                 vertical-align: middle;
@@ -62,23 +137,23 @@ body, input, select, textarea, button {
             border: none;
             padding: 0 15px;
             border-radius: 5px;
-            background: #fd7819;
+            background: #07baab;
             color: #fff;
             font-weight: bold;
             cursor: pointer;
 
             i {
-                color: #333;
+                color: #fff;
                 vertical-align: middle;
             }
         }
 
         button.register {
-            background: #fd7819;
+            background: #07baab;
         }
 
         .links {
-            color: #777;
+            color: #07baab;
             float: left;
 
             a {
@@ -98,14 +173,15 @@ body, input, select, textarea, button {
 
         i, input {
             float: left;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
             vertical-align: top;
             box-sizing: border-box;
-            line-height: 30px;
             border: none;
-            background: #f1efef;
+            background: #fff;
             border: 1px solid #ccc;
+            outline: none;
         }
 
         input {
@@ -115,7 +191,7 @@ body, input, select, textarea, button {
             border-radius: 0 5px 5px 0;
 
             &.ng-invalid {
-                border-bottom-color: red;
+                /*box-shadow:0 0 1px red inset;*/
             }
         }
 
@@ -123,10 +199,13 @@ body, input, select, textarea, button {
             border-radius: 5px 0 0 5px;
             text-align: center;
             border-right: none;
+            background: #07baab;
+            color: #fff;
+            font-size: 16px;
         }
 
         input {
-            width: calc(~"100% - 30px");
+            width: calc(~"100% - 40px");
         }
     }
 }
@@ -168,22 +247,76 @@ header {
 }
 
 body.phonegap {
-   
-
 }
 
-body.iOS{
-     header{
-        display:block!important;
+body.iOS {
+    header {
+        display: block !important;
     }
-         #home {
+
+    #home {
         padding: 30px 0;
+    }
+}
+
+#vitrin {
+
+    .v-block {
+        max-width: 400px;
+        width:calc(~"100% - 30px");
+        margin: 15px auto;
+        background-color: #f2ede0;
+    }
+
+    .products {
+        text-align: center;
+
+        .product-column {
+            width: 180px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .product {
+            position: relative;
+            vertical-align: top;
+
+            .inner {
+                margin: 10px;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #f2ede0;
+            }
+
+            img {
+                width: 100%;
+                padding:10px;
+                box-sizing:border-box;
+                background:#fff;
+            }
+
+            .info{
+                text-align:center;
+                line-height:18px;
+                h3{
+                    font-weight:bold;
+                }
+                p{
+                    direction:rtl;
+                    font-size:11px;
+                }
+            }
+
+            .info{
+
+            }
+        }
     }
 }
 
 #home {
     text-align: center;
-    padding-bottom:60px!important;
+    padding-bottom: 60px !important;
 
     .v-column {
         width: 180px;
@@ -210,7 +343,8 @@ body.iOS{
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            border-radius: 5px;
+            border-radius: 5px !important;
+            overflow: hidden;
             position: relative;
 
             .icon {

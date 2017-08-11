@@ -34,36 +34,116 @@
 
 </head>
 <body>
-    <header>
+  
+    <header></header>
 
-    </header>
+    
     <ng-view></ng-view>
+    <div ng-controller="authController" id="auth" ng-show="showAuth" ng-init="showForm = 'login'">
 
+        <div class="inner">
+            <form ng-show="showForm == 'login'" name="loginForm">
+                <h2>
+                    ورود به اکانت
+                </h2>
+
+                <div class="input-group">
+                    <i class="fa fa-at"></i>
+                    <input name="email" type="email" required placeholder="آدرس ایمیل" ng-model="loginModel.userName" />
+                </div>
+
+                <div class="input-group">
+                    <i class="fa fa-key"></i>
+                    <input name="password" type="password" required placeholder="رمز عبور" ng-model="loginModel.password" />
+                </div>
+                <div class="error rtl" ng-hide="!error">
+                   ایمیل و یا رمز وارد شده صحیح نمی باشد .
+                </div>
+                <button ng-disabled="!loginForm.$valid" class="login" ng-click="login()">
+                    ورود
+                </button>
+                <div class="links">
+
+                    <a class="register" ng-click="showForm = 'register'">
+                        عضویت
+                    </a>
+                    |
+                    <a class="forgot" ng-click="showForm = 'forgot'">
+                        فراموشی رمز عبور
+                    </a>
+
+                </div>
+            </form>
+            <form ng-show="showForm == 'register'" name="registerForm">
+                <h2>
+                    عضویت
+                </h2>
+
+
+                <div class="input-group">
+                    <i class="fa fa-user"></i>
+                    <input name="name" type="text" required placeholder="نام شخص / نام شرکت" ng-model="registerModel.name" />
+                </div>
+
+                <div class="input-group">
+                    <i class="fa fa-phone"></i>
+                    <input name="phone" type="text" required placeholder="شماره همراه" ng-model="registerModel.phone" />
+                </div>
+
+
+                <div class="input-group">
+                    <i class="fa fa-at"></i>
+                    <input name="email" type="email" required placeholder="آدرس ایمیل" ng-model="registerModel.email" />
+                </div>
+
+                <div class="input-group">
+                    <i class="fa fa-key"></i>
+                    <input name="password" type="password" required placeholder="رمز عبور" ng-model="registerModel.password" />
+                </div>
+
+
+
+                <button ng-disabled="!registerForm.$valid" class="register" ng-click="register()">
+                    عضویت
+                </button>
+                <div class="links">
+
+                    <a class="login" ng-click="showForm = ('login')">
+                        ورود
+                    </a>
+                    |
+                    <a class="forgot" ng-click="showForm = ('forgot')">
+                        فراموشی رمز عبور
+                    </a>
+
+                </div>
+            </form>
+        </div>
+    </div>
     <footer>
         <nav>
             <ul>
 
                 <li class="{{location.path() == '/home' ? 'active':''}}">
-                    <a ng-click="location.path('home')">
-                      <div class="logo"></div>
+                    <a ng-click="setLocation('home')">
+                        <div class="logo"></div>
                     </a>
                 </li>
 
                 <li class="{{location.path() == '/search' ? 'active':''}}">
-                    <a ng-click="location.path('search')">
+                    <a ng-click="setLocation('search')">
                         <i class="fa fa-search"></i>
                     </a>
                 </li>
 
                 <li class="{{location.path() == '/chat' ? 'active':''}}">
-                    <a ng-click="location.path('chat')">
+                    <a ng-click="setLocation('chat')">
 
                         <i class="fa fa-comment-o"></i>
                     </a>
                 </li>
-                <li class="{{location.path() == '/account' ? 'active':''}}">
-                    <a ng-click="location.path('account')">
-
+                <li class="logout {{location.path() == '/account' ? 'active':''}}">
+                    <a ng-click="setLocation('account')">
                         <i class="fa fa-user-o"></i>
                     </a>
                 </li>
@@ -86,11 +166,11 @@
     <script src="vendors/jquery.mosaicflow.min.js"></script>
     <script src="vendors/bower_components/moment/min/moment.min.js"></script>
     <script src="vendors/bower_components/underscore/underscore-min.js"></script>
-    <script src="vendors/bower_components/angular/angular.min.js"></script>
+    <script src="vendors/bower_components/angular/angular.js"></script>
     <script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="vendors/bower_components/angular-route/angular-route.min.js"></script>
 
-    <script src="js/app.js?v=44"></script>
+    <script src="js/app.js"></script>
 
 
 </body>

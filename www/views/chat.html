@@ -1,1 +1,86 @@
-﻿ddd
+﻿
+<div id="chat-page">
+
+    <div class="toggle-box">
+
+        <a class="active">
+            انتخاب کالا
+        </a>
+
+        <a>
+            متن گفت و گو
+        </a>
+
+        <div class="clearfix"></div>
+
+    </div>
+
+
+    <div ng-hide="true">
+
+        <ul id="discussion" class="chat-message-content">
+            <li class="reciver" data-guid="f00f2c32-c885-480b-ac91-57e0eb8aeb5c" dir="auto">LSIUDY IFG</li>
+            <li class="reciver" data-guid="a52385b9-8633-4102-91e8-adcfd42bb721" dir="auto">DSFHG LSDF G S</li>
+            <li class="reciver" data-guid="6cc42354-7b7a-4c9f-aceb-6bb825b4029c" dir="auto">FUCK THAT</li>
+            <li class="reciver" data-guid="989e052f-cbcc-444f-84c0-b5973dc35431" dir="auto">بشبش توش</li>
+            <li class="sender seen" data-guid="45a924a4-4ade-4165-abff-9df461337122" dir="auto">223</li>
+            <li class="sender seen" data-guid="3fef340c-f241-4f5a-812b-c95d30cb446a" dir="auto">5959</li>
+        </ul>
+        <div class="input-box">
+
+            <textarea ng-model="input" ng-class="'line-' + (input.split('\n').length )" placeholder="پیام شما"></textarea>
+
+            <div class="send-button">
+
+                <i class="fa fa-send">
+
+                </i>
+
+            </div>
+
+            <div class="attach-button">
+
+                <i class="fa fa-paperclip">
+
+                </i>
+
+            </div>
+
+        </div>
+    </div>
+    <div ng-hide="true">
+        <h1>
+            گفت و گوی برخط
+        </h1>
+
+        <ul class="contacts">
+            <li timestamp="1494805518830" data-uid="e1ddda52-9e59-4bd0-a8bd-87b9947c4879">
+                <img src="http://bazarsoo.com/Plugins/Vitrin/Repository/Images/defaultIcon.png">
+                <div class="info">
+                    <input dir="auto" readonly="" title=" امیر آرخه a@a.com " type="text" value=" امیر آرخه" class="name">
+                    <span class="preview">LSIUDY IFG</span>
+                    <span class="date">1396/02/25 4:15</span>
+                    <span class="count" style="display: none;">0</span>
+                </div><div class="clearfix"></div>
+            </li>
+            <li timestamp="1479845380203" data-uid="b6c06a98-bfea-4143-8112-f6124054e0b7"><img src="http://bazarsoo.com/Plugins/Vitrin/Repository/Images/defaultIcon.png"><div class="info"> <input dir="auto" readonly="" title=" خشایار شفق skhashayar@yahoo.com " type="text" value=" خشایار شفق " class="name"> <span class="preview">خیلی رو مخه</span><span class="date">1395/09/02 23:39</span><span class="count" style="display: none;">0</span></div><div class="clearfix"></div></li>
+            <li timestamp="1479692275790" data-uid="4f277fec-b9c3-43fd-8a7d-44b05b7485b5"><img src="http://bazarsoo.com/Plugins/Vitrin/Repository/Images/defaultIcon.png"><div class="info"> <input dir="auto" readonly="" title=" مسعود بابایی masuod.babaie@yahoo.com " type="text" value=" مسعود بابایی " class="name"> <span class="preview">برای محصول  dell - 1</span><span class="date">1395/09/01 5:7</span><span class="count" style="display: none;">0</span></div><div class="clearfix"></div></li>
+        </ul>
+
+        <div class="clearfix"></div>
+        <div class="search-box">
+
+            <input type="search" />
+            <div class="search-button">
+
+                <i class="fa fa-search">
+
+                </i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
