@@ -15,7 +15,7 @@
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' * 'unsafe-inline' 'unsafe-eval'; default-src * 'unsafe-inline';img-src data: * 'self' *  'unsafe-inline' 'unsafe-eval';  style-src 'self' 'unsafe-inline'; media-src *" />
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -28,17 +28,36 @@
     <link href="vendors/bower_components/reset-css/reset.css" rel="stylesheet" />
     <link href="vendors/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="vendors/bower_components/angular/angular-csp.css" rel="stylesheet" />
+    <link href="vendors/bower_components/sweetalert/dist/sweetalert.css" rel="stylesheet" />
+    <link href="vendors/bower_components/angular-material/angular-material.css" rel="stylesheet" />
     <link href="css/app.css?ran=3" rel="stylesheet" />
 
     <title>Bazarsoo</title>
+   
 
 </head>
 <body>
+    
+    <div ng-show="!loaded" style="position:fixed;top:0;left:0;background:#fff;width:100%;height:100vh;z-index:99999;" id="loader">
+        <div class="sk-cube-grid">
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    </div>
 
     <header></header>
 
 
-    <ng-view></ng-view>
+    <div id="view">
+        <ng-view ng-hide="!loaded"></ng-view>
+    </div>
     <div ng-controller="authController" id="auth" ng-show="showAuth" ng-init="showForm = 'login'">
 
         <div class="inner">
@@ -68,8 +87,12 @@
                         عضویت
                     </a>
                     |
-                    <a class="forgot" ng-click="showForm = 'forgot'">
+                    <a class="forgot" id="fgpassword" >
                         فراموشی رمز عبور
+                    </a>
+                    |
+                    <a class="forgot" id="confirmPassword" >
+                        فعال سازی ایمیل
                     </a>
 
                 </div>
@@ -79,16 +102,6 @@
                     عضویت
                 </h2>
 
-
-                <div class="input-group">
-                    <i class="fa fa-user"></i>
-                    <input name="name" type="text" required placeholder="نام شخص / نام شرکت" ng-model="registerModel.name" />
-                </div>
-
-                <div class="input-group">
-                    <i class="fa fa-phone"></i>
-                    <input name="phone" type="text" required placeholder="شماره همراه" ng-model="registerModel.phone" />
-                </div>
 
 
                 <div class="input-group">
@@ -101,6 +114,10 @@
                     <input name="password" type="password" required placeholder="رمز عبور" ng-model="registerModel.password" />
                 </div>
 
+                <div class="input-group">
+                    <i class="fa fa-key"></i>
+                    <input name="password" type="password" required placeholder="تکرار رمز عبور" ng-model="registerModel.ConfirmPassword" />
+                </div>
 
 
                 <button ng-disabled="!registerForm.$valid" class="register" ng-click="register()">
@@ -112,10 +129,13 @@
                         ورود
                     </a>
                     |
-                    <a class="forgot" ng-click="showForm = ('forgot')">
+                    <a class="forgot" id="fgpassword">
                         فراموشی رمز عبور
                     </a>
-
+                    |
+                    <a class="forgot" id="confirmPassword">
+                        فعال سازی ایمیل
+                    </a>
                 </div>
             </form>
         </div>
@@ -137,14 +157,16 @@
                     </a>
                 </li>
 
-                <li class="{{location.path() == '/chat' ? 'active':''}}">
+                <li class="{{location.path() == '/chat' ? 'active':''}} chat">
                     <a ng-click="setLocation('chat')">
-
-                        <i class="fa fa-comment-o"></i>
+                        <span ng-show="msgCount()" class="count">{{msgCount()}}</span>
+                        <i class="fa fa-comment-o {{msgCount() > 0 ? 'blink' : ''}}"></i>
                     </a>
                 </li>
-                <li class="logout {{location.path() == '/account' ? 'active':''}}">
+                <li class="account {{location.path() == '/account' ? 'active':''}}">
                     <a ng-click="setLocation('account')">
+
+                        <span ng-show="userService.invoices.length" class="count">  {{userService.invoices.length}}</span>
                         <i class="fa fa-user-o"></i>
                     </a>
                 </li>
@@ -163,15 +185,24 @@
 
     <script type="text/javascript" src="cordova.js"></script>
 
+
     <script src="vendors/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="vendors/bower_components/signalr/jquery.signalR.js"></script>
+    <script src="http://bazarsoo.com/signalr/hubs"></script>
 
+
+    <script src="vendors/bower_components/sweetalert/dist/sweetalert.min.js"></script>
     <script src="vendors/bower_components/moment/min/moment.min.js"></script>
     <script src="vendors/bower_components/underscore/underscore-min.js"></script>
+
+
     <script src="vendors/bower_components/angular/angular.js"></script>
+    <script src="vendors/bower_components/angular-aria/angular-aria.js"></script>
     <script src="vendors/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="vendors/bower_components/angular-route/angular-route.min.js"></script>
     <script src="vendors/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="vendors/bower_components/angular-material/angular-material.js"></script>
+
     <script src="js/app.js"></script>
 
 

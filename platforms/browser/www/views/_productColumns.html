@@ -1,0 +1,16 @@
+﻿
+<div ng-repeat="column in productColumns" class="product-column">
+    <div ng-repeat="product in column" class="product" data-rid="{{product.rid}}">
+        <div class="inner" ng-click="goProduct(product)">
+            <img ng-src="http://bazarsoo.com/{{product.image}}?width=140" />
+            <div class="info">
+                <h3>
+                    {{product.name}}
+                </h3>
+                <p>
+                    {{product.description}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
