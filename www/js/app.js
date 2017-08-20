@@ -21,6 +21,24 @@ function onDeviceReady() {
 
 $(function () {
 
+
+    //$.connection.hub.url = 'http://localhost:56824/signalr';
+    //var myHub = $.connection.chatHub;
+
+    //myHub.client.broadcastMessage = function (data) {
+    //  console.log(data);
+    //}
+
+    //$.connection.hub.start({ transport: 'longPolling' }).done(function () {
+
+    //    console.log('connected fro qqq');
+    //});
+
+
+
+
+
+
     $.support.cors = true;
     $(document).on('click', 'a.external', function (e) {
 
@@ -677,13 +695,19 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
     var ChatUrl = apiBase + "/signalr";
 
-    $.connection.hub.logging = true;
+    //$.connection.hub.logging = true;
+
 
     SignalrConnection = $.hubConnection(ChatUrl, {
-        useDefaultPath: false
+        useDefaultPath: false,
+        qs : { 'access_token': $rootScope.getUser().access_token }
     });
 
     var chub = SignalrConnection.createHubProxy('chatHub');
+
+
+  
+
 
 
     chub.on("agreeProductPrice", function (model) {
@@ -793,8 +817,12 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
 
     });
+    
+    chub.on("devtest", function (data) {
+    console.log('devtest',data);
 
 
+    });
 
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
@@ -839,16 +867,15 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
     });
 
 
-    SignalrConnection.start({ transport: 'longPolling' }).done(function (data) {
+
+    SignalrConnection.start().done(function (data) {
 
         console.info("connected to the signalr server");
 
 
-    }).fail(function () {
-        console.error("failed in connecting to the signalr server");
+    }).fail(function (data) {
+        console.error("failed in connecting to the signalr server", data);
     });
-
-
 
     angLocation = $location;
 
