@@ -255,6 +255,11 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
             .md-chip-input-container {
                 margin: 0;
                 width: 100%;
+
+                input {
+                    width: 100%;
+                    text-align: center;
+                }
             }
         }
 
@@ -757,8 +762,8 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
         height: calc(~"100% - 163px");
         border-radius: 5px;
         overflow: auto;
-        position:absolute;
-        width:calc(~"100% - 20px");
+        position: absolute;
+        width: calc(~"100% - 20px");
 
         li {
             border-bottom: 1px solid #ccc;
@@ -1324,9 +1329,60 @@ body.iOS {
 
 .v-block {
     max-width: 400px;
-    width: calc(~"100% - 30px");
+    width: calc(~"100% - 10px");
     margin: 15px auto;
     background-color: #f2ede0;
+}
+
+
+      ::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+#search-result {
+
+    .suggestions {
+        padding-left: 20px;
+        margin-top: 10px;
+        position: relative;
+        min-height: 30px;
+        overflow-x:scroll;
+        margin-bottom:-20px;
+
+        ul {
+            line-height: 30px;
+            width: 9000px;
+ 
+     
+
+            li {
+                float: left;
+                padding: 4px;
+
+
+                a {
+                    background: #f2ede0;
+                    border:1px solid #ede7d8;
+                    border-radius: 5px;
+                    padding: 5px;
+                    vertical-align: top;
+                    font-size:10px;
+
+                }
+            }
+
+            &:after {
+                clear: both;
+                display: block;
+                content: ' ';
+            }
+        }
+    }
 }
 
 .products, #search-result {

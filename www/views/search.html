@@ -13,7 +13,13 @@
     </div>
 
     <div id="search-result" ng-show="searchMode == 'products'">
-
+        <div ng-show="suggestions" class="suggestions">
+            <ul>
+                <li ng-repeat="item in suggestions">
+                    <a ng-click="searchWords.push(item)">{{item}}</a>
+                </li>
+            </ul>
+        </div>
         <ng-include src="'/views/_productColumns.html'"></ng-include>
 
     </div>
@@ -26,19 +32,21 @@
 
     <div class="search-box">
         <div ng-show="searchMode == 'products'">
+
             <md-chips ng-model="searchWords"
                       placeholder="جست و جو کنید ..."
-                      md-separator-keys="keys" md-autocomplete-snap>
-
-                <md-autocomplete md-search-text="searchText"
+                      md-separator-keys="keys" >
+                <!--md-autocomplete-snap-->
+                <!--<md-autocomplete md-search-text="searchText"
                                  md-min-length="0"
                                  md-items="item in searchAC(searchText)"
                                  md-no-cache="true"
                                  placeholder="جست و جو کنید">
                     <span md-highlight-text="searchText">{{item}}</span>
-                </md-autocomplete>
+                </md-autocomplete>-->
 
             </md-chips>
+
         </div>
         <div ng-show="searchMode == 'vitrins'">
             <input type="search" placeholder="جست و جو در ویترین ها" ng-model="vitrinInput" class="vitrinInput" />
@@ -51,7 +59,7 @@
             </div>
 
         </div>
-        </div>
+    </div>
 
 
 </div>

@@ -697,10 +697,13 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
     //$.connection.hub.logging = true;
 
+    var access_token = '';
+    if ($rootScope.getUser())
+        access_token = $rootScope.getUser().access_token;
 
     SignalrConnection = $.hubConnection(ChatUrl, {
         useDefaultPath: false,
-        qs : { 'access_token': $rootScope.getUser().access_token }
+        qs: { 'access_token': access_token }
     });
 
     var chub = SignalrConnection.createHubProxy('chatHub');
@@ -1067,7 +1070,7 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
         }, 0) / columnCount;
 
 
-        var columns = new Array(columnCount);
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
 
         var cPointer = 0;
         $scope.searchVitrins.forEach(function (item, index) {
@@ -1111,7 +1114,7 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
         var columnWidth = 180;
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
-        var columns = new Array(columnCount);
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
 
         var cPointer = 0;
 
@@ -1187,6 +1190,13 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
         $('input[type=search]').blur();
 
+        $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + searchWords).then(function (res) {
+
+            $scope.suggestions = res.data;
+
+        }, function () {
+
+        });
 
         $scope.products = [];
 
@@ -1212,24 +1222,24 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
         });
 
     }, true);
-    $scope.searchAC = function (word) {
+    //$scope.searchAC = function (word) {
 
-        var deferred = $q.defer();
+    //    var deferred = $q.defer();
 
-        $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + word).then(function (res) {
+    //    $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + word).then(function (res) {
 
-            deferred.resolve(res.data);
+    //        deferred.resolve(res.data);
 
-        }, function () {
+    //    }, function () {
 
-        });
-
-
-
-        return deferred.promise;
+    //    });
 
 
-    };
+
+    //    return deferred.promise;
+
+
+    //};
 });
 
 
@@ -2078,7 +2088,7 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
         }, 0) / columnCount;
 
 
-        var columns = new Array(columnCount);
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
 
         var cPointer = 0;
         $scope.vitrins.forEach(function (item, index) {
@@ -2117,7 +2127,7 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
         var columnWidth = 180;
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
-        var columns = new Array(columnCount);
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
 
         var cPointer = 0;
 
