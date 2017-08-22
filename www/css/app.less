@@ -1335,9 +1335,9 @@ body.iOS {
 }
 
 
-      ::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
+::-webkit-scrollbar {
+    width: 0px; /* remove scrollbar space */
+    background: transparent; /* optional: just make scrollbar invisible */
 }
 /* optional: show position indicator in red */
 ::-webkit-scrollbar-thumb {
@@ -1351,14 +1351,14 @@ body.iOS {
         margin-top: 10px;
         position: relative;
         min-height: 30px;
-        overflow-x:scroll;
-        margin-bottom:-20px;
+        overflow-x: scroll;
+        margin-bottom: -5px;
 
         ul {
             line-height: 30px;
             width: 9000px;
- 
-     
+
+
 
             li {
                 float: left;
@@ -1367,12 +1367,11 @@ body.iOS {
 
                 a {
                     background: #f2ede0;
-                    border:1px solid #ede7d8;
+                    border: 1px solid #ede7d8;
                     border-radius: 5px;
                     padding: 5px;
                     vertical-align: top;
-                    font-size:10px;
-
+                    font-size: 10px;
                 }
             }
 
@@ -2020,5 +2019,13 @@ table th[class*="col-"] {
 
     #chat-page .selectProducts .product.product-choose {
         width: calc(33.3333% - 14.34px);
+    }
+}
+
+
+@media(max-width: 380px) {
+
+    #home .v-column, #search-result .v-column,.products .product-column, #search-result .product-column {
+        width: 160px !important;
     }
 }

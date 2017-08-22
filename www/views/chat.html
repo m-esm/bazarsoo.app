@@ -66,7 +66,7 @@
                         <span class="titler" ng-show='focusOn == "total"'>
                             {{item.count *item.price | currency : '':0}}
                         </span>
-                        <input type="text" ng-model="item.total"  ng-change="calcPrice(item)" value="{{item.count * item.price}}" ng-blur="focusOn = ''" ng-focus="focusOn = 'total'"  class="priceTotal money-input" placeholder="قیمت توافقی">
+                        <input type="text"  value="{{item.count * item.price}}" ng-blur="focusOn = ''" ng-focus="focusOn = 'total'"  class="priceTotal money-input" placeholder="قیمت توافقی">
                     </div>
                     <div class="buttons">
                         <button class="agree">
@@ -197,8 +197,7 @@
 
         <div class="clearfix"></div>
         <div class="search-box">
-
-            <input type="search" ng-model="searchModel" />
+            <input type="text" ng-model="searchModel" />
             <div class="search-button">
 
                 <i class="fa fa-search">

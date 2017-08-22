@@ -219,6 +219,10 @@ button,
   margin: 0;
   width: 100%;
 }
+#search-page .search-box .md-chips .md-chip-input-container input {
+  width: 100%;
+  text-align: center;
+}
 #search-page .search-box input[type=search] {
   width: 100%;
   padding: 10px;
@@ -1124,9 +1128,48 @@ body.iOS #home {
 }
 .v-block {
   max-width: 400px;
-  width: calc(100% - 30px);
+  width: calc(100% - 10px);
   margin: 15px auto;
   background-color: #f2ede0;
+}
+::-webkit-scrollbar {
+  width: 0px;
+  /* remove scrollbar space */
+  background: transparent;
+  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+#search-result .suggestions {
+  padding-left: 20px;
+  margin-top: 10px;
+  position: relative;
+  min-height: 30px;
+  overflow-x: scroll;
+  margin-bottom: -5px;
+}
+#search-result .suggestions ul {
+  line-height: 30px;
+  width: 9000px;
+}
+#search-result .suggestions ul li {
+  float: left;
+  padding: 4px;
+}
+#search-result .suggestions ul li a {
+  background: #f2ede0;
+  border: 1px solid #ede7d8;
+  border-radius: 5px;
+  padding: 5px;
+  vertical-align: top;
+  font-size: 10px;
+}
+#search-result .suggestions ul:after {
+  clear: both;
+  display: block;
+  content: ' ';
 }
 .products,
 #search-result {
@@ -1692,5 +1735,13 @@ table th[class*="col-"] {
 @media (min-width: 1024px) {
   #chat-page .selectProducts .product.product-choose {
     width: calc(18.9933%);
+  }
+}
+@media (max-width: 380px) {
+  #home .v-column,
+  #search-result .v-column,
+  .products .product-column,
+  #search-result .product-column {
+    width: 160px !important;
   }
 }

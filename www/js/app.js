@@ -1060,6 +1060,11 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
     var getColumns = function () {
 
         var columnWidth = 180;
+
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
 
@@ -1112,6 +1117,10 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
         var products = $scope.products;
 
         var columnWidth = 180;
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
         var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
@@ -2050,7 +2059,7 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     };
 });
 
-bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $window, $location) {
+bazarsooAng.controller('homeController', function ($scope,$timeout, $http, $rootScope, $window, $location) {
 
 
     $scope.isInFav = function (vid) {
@@ -2078,6 +2087,11 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
     var getColumns = function () {
 
         var columnWidth = 180;
+
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
 
@@ -2125,6 +2139,10 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
         var products = $scope.vitrin.products;
 
         var columnWidth = 180;
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
         var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
 
         var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
@@ -2171,11 +2189,20 @@ bazarsooAng.controller('homeController', function ($scope, $http, $rootScope, $w
         $location.hash(product.rid);
 
     };
+    $timeout(function () {
+        $rootScope.loaded = false;
+    }, 501);
 
     $http.get(apiBase + '/vitrin/api/vitrins').then(function (res) {
 
 
         $scope.vitrins = res.data;
+
+        $timeout(function () {
+
+            $rootScope.loaded = true;
+
+        }, 500);
 
         $rootScope.$watch(function () {
             return $location.hash();

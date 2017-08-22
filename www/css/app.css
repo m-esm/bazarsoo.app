@@ -1148,7 +1148,7 @@ body.iOS #home {
   position: relative;
   min-height: 30px;
   overflow-x: scroll;
-  margin-bottom: -20px;
+  margin-bottom: -5px;
 }
 #search-result .suggestions ul {
   line-height: 30px;
@@ -1735,5 +1735,13 @@ table th[class*="col-"] {
 @media (min-width: 1024px) {
   #chat-page .selectProducts .product.product-choose {
     width: calc(18.9933%);
+  }
+}
+@media (max-width: 380px) {
+  #home .v-column,
+  #search-result .v-column,
+  .products .product-column,
+  #search-result .product-column {
+    width: 160px !important;
   }
 }
