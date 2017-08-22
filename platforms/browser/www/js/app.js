@@ -8,7 +8,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 //http://192.168.2.200:9090
 //http://localhost:56824
 
-apiBase = 'http://192.168.2.200:9090';
+apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
