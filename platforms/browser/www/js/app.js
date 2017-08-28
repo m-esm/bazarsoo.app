@@ -10,12 +10,84 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 apiBase = 'http://bazarsoo.com';
 
+
+
+//Notification.requestPermission(function (permission) {
+//    // If the user accepts, let’s create a notification
+//    if (permission === 'granted') {
+//        var notification = new Notification('My title', {
+//            tag: 'message1',
+//            body: 'My body'
+//        });
+//       // notification.onshow = function () { alert('show'); };
+//       // notification.onclose = function () { alert('close'); };
+//      //  notification.onclick = function () { alert('click'); };
+//    }
+//});
+
+
 function onDeviceReady() {
+
 
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};
     phoneService.vibrate = navigator.vibrate;
+
+
+    //console.warn("testNotifications Started");
+    //console.warn(cordova.plugins.notification);
+    //// Checks for permission
+    //cordova.plugins.notification.local.hasPermission(function (granted) {
+
+    //    console.warn("Testing permission");
+
+    //    if (granted == false) {
+
+    //        console.warn("No permission");
+    //        // If app doesnt have permission request it
+    //        cordova.plugins.notification.local.registerPermission(function (granted) {
+
+    //            console.warn("Ask for permission");
+    //            if (granted == true) {
+
+    //                console.warn("Permission accepted");
+    //                // If app is given permission try again
+    //                testNotifications();
+
+    //            } else {
+    //                alert("We need permission to show you notifications");
+    //            }
+
+    //        });
+
+    //    } else {
+
+    //        var pathArray = window.location.pathname.split("/www/"),
+    //            secondLevelLocation = window.location.protocol + "//" + pathArray[0],
+    //            now = new Date();
+
+
+    //        console.warn("sending notification", cordova.plugins.notification.local);
+
+    //        var isAndroid = false;
+
+    //        if (device.platform === "Android") {
+    //            isAndroid = true;
+    //        }
+
+    //        cordova.plugins.notification.local.schedule({
+    //            id: 2,
+    //            title: "Test notification 9",
+    //            text: "This is a test notification",
+    //            // sound: isAndroid ? "file://sounds/notification.mp3" : "file://sounds/notification.caf",
+    //            // at: new Date(new Date().getTime())
+    //            // data: { secret:key }
+    //        });
+
+    //    }
+
+    //});
 
 }
 
@@ -431,7 +503,7 @@ bazarsooAng.factory('authService', ['$http', '$q', function ($http, $q) {
 
 
         }, function (err, status) {
-            _logOut();
+
             deferred.reject(err);
         });
 
@@ -676,16 +748,24 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
     }, 500);
 
     $rootScope.contacts = [];
+    $rootScope.msgCount = function () {
+        return false;
+    };
 
     $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
+        console.log(Array.isArray(res.data));
+        if (Array.isArray(res.data)) {
 
-        $rootScope.msgCount = function () {
-            return _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
-        };
+            $rootScope.msgCount = function () {
+                return _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
+            };
 
-        $rootScope.contacts = res.data;
+            $rootScope.contacts = res.data;
+
+        }
 
     }, function () {
+
 
 
     });
@@ -707,11 +787,6 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
     });
 
     var chub = SignalrConnection.createHubProxy('chatHub');
-
-
-  
-
-
 
     chub.on("agreeProductPrice", function (model) {
 
@@ -820,9 +895,9 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
 
     });
-    
+
     chub.on("devtest", function (data) {
-    console.log('devtest',data);
+        console.log('devtest', data);
 
 
     });
@@ -1017,14 +1092,15 @@ bazarsooAng.controller('authController', function ($scope, $http, $q, $timeout, 
 
         authService.login($scope.loginModel).then(function (res) {
 
-
             location.reload();
-
-
 
         },
          function (err) {
              $scope.error = err;
+
+             $timeout(function () {
+                 $scope.error = "";
+             }, 3000);
 
          });
     };
@@ -1255,7 +1331,7 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
 bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, $rootScope, $window, $location) {
 
-  
+
     $scope.deleteChat = function () {
 
         swal({
@@ -2059,7 +2135,7 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     };
 });
 
-bazarsooAng.controller('homeController', function ($scope,$timeout, $http, $rootScope, $window, $location) {
+bazarsooAng.controller('homeController', function ($scope, $timeout, $http, $rootScope, $window, $location) {
 
 
     $scope.isInFav = function (vid) {

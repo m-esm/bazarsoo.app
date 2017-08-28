@@ -358,20 +358,6 @@ module.exports = [
         ]
     },
     {
-        "file": "plugins/cordova-plugin-device/www/device.js",
-        "id": "cordova-plugin-device.device",
-        "pluginId": "cordova-plugin-device",
-        "clobbers": [
-            "device"
-        ]
-    },
-    {
-        "file": "plugins/cordova-plugin-device/src/browser/DeviceProxy.js",
-        "id": "cordova-plugin-device.DeviceProxy",
-        "pluginId": "cordova-plugin-device",
-        "runs": true
-    },
-    {
         "file": "plugins/cordova-plugin-device-motion/www/Acceleration.js",
         "id": "cordova-plugin-device-motion.Acceleration",
         "pluginId": "cordova-plugin-device-motion",
@@ -602,6 +588,28 @@ module.exports = [
             "navigator.notification",
             "navigator"
         ]
+    },
+    {
+        "file": "plugins/phonegap-plugin-local-notification/www/notification.js",
+        "id": "phonegap-plugin-local-notification.Notification",
+        "pluginId": "phonegap-plugin-local-notification",
+        "clobbers": [
+            "Notification"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-device/www/device.js",
+        "id": "cordova-plugin-device.device",
+        "pluginId": "cordova-plugin-device",
+        "clobbers": [
+            "device"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-device/src/browser/DeviceProxy.js",
+        "id": "cordova-plugin-device.DeviceProxy",
+        "pluginId": "cordova-plugin-device",
+        "runs": true
     }
 ];
 module.exports.metadata = 
@@ -614,7 +622,6 @@ module.exports.metadata =
     "cordova-plugin-media-capture": "1.2.0",
     "cordova-plugin-console": "1.0.7",
     "cordova-plugin-contacts": "2.0.1",
-    "cordova-plugin-device": "1.1.6",
     "cordova-plugin-device-motion": "1.2.5",
     "cordova-plugin-device-orientation": "1.0.7",
     "cordova-plugin-dialogs": "1.2.1",
@@ -627,7 +634,9 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "3.2.2",
     "cordova-plugin-statusbar": "2.1.3",
     "cordova-plugin-vibration": "2.1.5",
-    "cordova-plugin-whitelist": "1.2.2"
+    "cordova-plugin-whitelist": "1.2.2",
+    "phonegap-plugin-local-notification": "1.0.1",
+    "cordova-plugin-device": "1.1.6"
 }
 // BOTTOM OF METADATA
 });

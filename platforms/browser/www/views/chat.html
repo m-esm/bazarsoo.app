@@ -140,7 +140,7 @@
                         <p ng-if="!item.FileAttachmentUrl">
                             {{item.MessageDescrp}} 
                         </p>
-                        <img ng-if="item.FileAttachmentUrl && isImage(item.FileAttachmentUrl)" ng-src="{{apiBase + item.FileAttachmentUrl}}" />
+                        <img ng-if="item.FileAttachmentUrl && isImage(item.FileAttachmentUrl)" ng-src="{{apiBase + item.FileAttachmentUrl}}?width=300" />
                         <a class="external" ng-if="item.FileAttachmentUrl" ng-href="{{apiBase + item.FileAttachmentUrl}}">
                             دانلود ضمیمه
                         </a>
