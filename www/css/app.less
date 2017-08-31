@@ -206,6 +206,33 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
     }
 }
 
+#vitrin {
+    .vitrin-info {
+
+        background: #f2ede0;
+
+        width: calc(~"100% - 10px");
+        max-width: 400px;
+
+        margin: 0 auto;
+        border-radius: 5px;
+        line-height: 26px;
+        margin-top:-5px;
+
+        .inner {
+            padding: 10px 0;
+        }
+
+        label {
+            font-weight: bold;
+
+            &:after {
+                content: ' : ';
+            }
+        }
+    }
+}
+
 #search-page {
     padding-bottom: 300px;
 
@@ -348,6 +375,7 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
         border-radius: 5px;
         overflow: auto;
         margin-top: 10px;
+        padding-bottom: 80px;
 
         .product {
             background: #f2ede0;
@@ -887,7 +915,7 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
         .send-button, .attach-button {
             color: #07baab;
             position: absolute;
-            bottom: 0;
+            bottom: 10px;
             right: 10px;
             height: 40px;
             line-height: 40px;
@@ -2025,7 +2053,7 @@ table th[class*="col-"] {
 
 @media(max-width: 380px) {
 
-    #home .v-column, #search-result .v-column,.products .product-column, #search-result .product-column {
+    #home .v-column, #search-result .v-column, .products .product-column, #search-result .product-column {
         width: 160px !important;
     }
 }
