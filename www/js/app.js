@@ -372,7 +372,7 @@ function registerHomeController($rootScope, $timeout, $http, $rootScope, $window
 
         if (!$rootScope.vitrin)
             return;
-      
+
 
         var products = $rootScope.vitrin.products;
 
@@ -1581,16 +1581,17 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
                 $rootScope.$apply();
 
-
-
-                $.get(apiBase + '/onlinechat/chat/deleteChat', {
-                    contact: contact
-                }, function () {
-
-
-
+                jQuery.ajax({
+                    url: apiBase + '/onlinechat/chat/deleteChat',
+                    data: {
+                        contact: contact
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
                 });
 
+           
 
 
             }
@@ -1612,10 +1613,16 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
             closeOnCancel: true
         }, function (isConfirm) {
             if (isConfirm) {
-                $.get(apiBase + '/onlinechat/chat/BlockChat', {
-                    contact: $rootScope.activeContact.userid
-                }, function () {
 
+                jQuery.ajax({
+                    url: apiBase + '/onlinechat/chat/BlockChat',
+                    data: {
+                        contact: $rootScope.activeContact.userid
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
+                }).done(function(){
                     var index = $rootScope.contacts.indexOf($rootScope.activeContact);
 
 
@@ -1623,8 +1630,20 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                     $rootScope.activeContact = false;
 
                     $rootScope.$apply();
-
                 });
+
+
+                //$.get(apiBase + '/onlinechat/chat/BlockChat', {
+                //    contact: $rootScope.activeContact.userid
+                //}, {
+                //    beforeSend: function (xhr, settings) {
+                //        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                //    }
+                //}, function () {
+
+                 
+
+                //});
 
 
 
@@ -1648,14 +1667,30 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         }, function (input) {
             if (input) {
 
-                $http.post(apiBase + '/onlinechat/chat/reportchat', {
-                    contact: $rootScope.activeContact.userid,
+                jQuery.ajax({
+                    method: 'post',
+                    url: apiBase + '/onlinechat/chat/reportchat',
+                    data: {
+                        contact: $rootScope.activeContact.userid,
                     report: input
-                }).then(function (res) {
-
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
+                }).done(function () {
                     swal('گزارش شما ثبت گردید .', 'شماره پیگیری : ' + res.data, 'success');
 
-                }, function () { });
+                });
+
+
+                //$http.post(apiBase + '/onlinechat/chat/reportchat', {
+                //    contact: $rootScope.activeContact.userid,
+                //    report: input
+                //}).then(function (res) {
+
+                //    swal('گزارش شما ثبت گردید .', 'شماره پیگیری : ' + res.data, 'success');
+
+                //}, function () { });
 
 
 
