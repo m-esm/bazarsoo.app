@@ -52,25 +52,24 @@
                         <span class="titler" ng-show='focusOn == "price"'>
                             {{item.price | currency : '':0}}
                         </span>
-                        <input type="text" ng-focus="focusOn = 'price'" ng-blur="focusOn = ''" class="price money-input" ng-readonly="agreementWaiting(item)" ng-model="item.price" placeholder="قیمت توافقی">
+                        <input type="text" ng-focus="focusOn = 'price'" ng-change="calcPriceFields(item,'price')" ng-blur="focusOn = ''" class="price money-input" ng-readonly="agreementWaiting(item)" ng-model="item.price" placeholder="قیمت توافقی">
                     </div>
                     <div class="input-group">
                         <label> تعداد </label>
                         <span class="titler" ng-show='focusOn == "count"'>
                             {{item.count | currency : '':0}}
-                        </span>
-                        <input type="text" ng-focus="focusOn = 'count'" ng-blur="focusOn = ''" class="count money-input" ng-readonly="agreementWaiting(item)" ng-model="item.count" min="1" placeholder="تعداد">
+                        </span> 
+                        <input type="text" ng-focus="focusOn = 'count'" ng-change="calcPriceFields(item,'count')" ng-blur="focusOn = ''" class="count money-input" ng-readonly="agreementWaiting(item)" ng-model="item.count" min="1" placeholder="تعداد">
                     </div>
                     <div class="input-group">
                         <label> قیمت کل (تومان)</label>
                         <span class="titler" ng-show='focusOn == "total"'>
-                            {{item.count *item.price | currency : '':0}}
+                            {{item.total | currency : '':0}}
                         </span>
-                        <input type="text" readonly  value="{{item.count * item.price}}" ng-blur="focusOn = ''" ng-focus="focusOn = 'total'"  class="priceTotal money-input" placeholder="قیمت توافقی">
+                        <input type="text" ng-model="item.total" ng-blur="focusOn = ''" ng-change="calcPriceFields(item,'total')" ng-focus="focusOn = 'total'" ng-readonly="agreementWaiting(item)"  class="priceTotal money-input" placeholder="قیمت کل">
                     </div>
                     <div class="buttons">
                         <button class="agree">
-
 
                             <span ng-click="agreePrice(item)" ng-hide="agreementWaiting(item)"> پیشنهاد قیمت</span>
 

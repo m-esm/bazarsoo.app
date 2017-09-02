@@ -1556,7 +1556,23 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
 bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, $rootScope, $window, $location) {
 
+    $scope.calcPriceFields = function (item, field) {
 
+        console.log(item, field);
+
+        if (parseInt(item.count) <= 0)
+            item.count = 1;
+
+        if (field == 'total') {
+            
+            item.price = parseInt( item.total / item.count);
+
+        } else {
+            item.total = item.count * item.price;
+        }
+
+
+    };
     $scope.deleteChat = function () {
 
         swal({
@@ -1928,6 +1944,8 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
                                         if (item.count == 0)
                                             item.count = 1;
+
+                                        $scope.calcPriceFields(item, '');
 
 
 
