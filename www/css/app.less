@@ -954,7 +954,7 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
     content: ' ';
 }
 
-#product-page {
+#product-page,#vitrin {
     padding-top: 40px;
 
     .buttons {
@@ -965,6 +965,7 @@ body, input, select, textarea, button, .sweet-alert, .md-chips {
         left: 0;
         width: 100%;
         box-sizing: border-box;
+        z-index:99;
 
         a {
             height: 30px;
@@ -1360,6 +1361,23 @@ body.iOS {
     width: calc(~"100% - 10px");
     margin: 15px auto;
     background-color: #f2ede0;
+
+      &.color-4 {
+            background: #f2ede0;
+        }
+
+        &.color-1 {
+            background: #eee8d8;
+        }
+
+        &.color-2 {
+            background: #e8e1d0;
+        }
+
+        &.color-3 {
+            background: #e1d9c6;
+        }
+
 }
 
 

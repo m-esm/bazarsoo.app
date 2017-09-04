@@ -299,14 +299,7 @@ function registerHomeController($rootScope, $timeout, $http, $rootScope, $window
 
 
 
-    $rootScope.isInFav = function (vid) {
-
-        if (!$rootScope.userService)
-            return false;
-
-        return _.findWhere($rootScope.userService.favorites, { VitrinId: vid });
-
-    };
+ 
 
     $rootScope.goProduct = function (productId) {
 
@@ -437,6 +430,12 @@ function registerHomeController($rootScope, $timeout, $http, $rootScope, $window
         $rootScope.vitrin = $rootScope.getVitrin();
         if ($rootScope.vitrin)
             $rootScope.vitrin.productColumns = getProductColumns();
+
+        $timeout(function () {
+            $rootScope.loaded = true;
+        });
+
+
 
     });
 
@@ -768,7 +767,41 @@ bazarsooAng.filter('orderChatMessages', function () {
 
 bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, userService) {
 
+    $rootScope.goChat = function (userId) {
+        $location.path('/chat');
+        $location.hash(userId);
+
+    };
+
+    $rootScope.goBack = function () {
+        $window.history.back();
+    };
     // registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location);
+    $rootScope.isInFav = function (vid) {
+
+        if (!$rootScope.userService)
+            return false;
+
+        return _.findWhere($rootScope.userService.favorites, { VitrinId: vid });
+
+    };
+
+    $rootScope.toggleFav = function (vid) {
+
+        $http.post(apiBase + '/Vitrin/Ui/VitrinAddToFavorit', { vitrinId: vid }).then(function () {
+
+
+            userService.init().then(function (_userService) {
+                $rootScope.userService = _userService;
+
+
+
+            }, function () {
+            });
+
+        }, function () { });
+
+    };
 
     $(function () {
         var vibTimeout = 0;
@@ -928,6 +961,11 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     getVitrins().then(function (res) {
 
         $rootScope.vitrins = res.data;
+
+        $rootScope.vitrins.forEach(function (item, index) {
+            item.colorId = _.random(1, 5);
+        });
+
         $rootScope.getVitrin = function (id) {
 
             return _.findWhere($rootScope.vitrins, { Id: id });
@@ -938,16 +976,18 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
             registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location);
         }
 
+        $timeout(function () {
+
+            $rootScope.loaded = true;
+
+        }, 500);
+
     });
 
 
     $rootScope.apiBase = apiBase;
 
-    $timeout(function () {
-
-        $rootScope.loaded = true;
-
-    }, 500);
+  
 
     $rootScope.contacts = [];
     $rootScope.msgCount = function () {
@@ -955,7 +995,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     };
 
     $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
-        console.log(Array.isArray(res.data));
+       // console.log(Array.isArray(res.data));
         if (Array.isArray(res.data)) {
 
             $rootScope.msgCount = function () {
@@ -1054,7 +1094,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     chub.on("deleteAgreement", function (agreeId, fromUserId) {
 
-        console.log('deleteAgreement', agreeId);
+      console.log('deleteAgreement', agreeId);
 
         var agreement = _.findWhere($rootScope.activeContact.agreements, { ID: agreeId });
         var index = $rootScope.activeContact.agreements.indexOf(agreement);
@@ -1115,24 +1155,18 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
-    chub.on("devtest", function (data) {
-        console.log('devtest', data);
-
-
-    });
-
-
+   
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
 
 
 
-        console.log("broadcastMessage", userId, message, date);
+       // console.log("broadcastMessage", userId, message, date);
 
         $http.get(apiBase + '/OnlineChat/Chat/UserArrived');
 
         var contact = _.findWhere($rootScope.contacts, { userid: userId });
 
-        console.log(contact);
+      //  console.log(contact);
 
         if (contact == undefined)
             contact = {};
@@ -1220,11 +1254,20 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
         var requireLogin = false;
 
+
+
+        if (next.templateUrl == "views/home.html") {
+            // already going to #login, no redirect needed
+            $rootScope.loaded = false;
+
+        }
+
         if (next.data) {
             requireLogin = next.data.requireLogin;
 
             if (requireLogin && !localStorage.user) {
 
+               
 
                 $rootScope.showAuth = true;
                 //    $location.path(current);
@@ -1558,7 +1601,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
     $scope.calcPriceFields = function (item, field) {
 
-        console.log(item, field);
+       // console.log(item, field);
 
         if (parseInt(item.count) <= 0)
             item.count = 1;
@@ -1781,7 +1824,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         var agreement = _.findWhere($rootScope.activeContact.agreements, { productId: product.rid });
 
         if (agreement) {
-            console.log(agreement.ID);
+           // console.log(agreement.ID);
             $http.post(apiBase + "/OnlineChat/Chat/DeletePriceAgreement", {
                 ID: agreement.ID
             }).then(function () {
@@ -1828,7 +1871,8 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
 
                     $rootScope.activeContact.agreements.push(agreement);
-
+                    $scope.showChoose = false;
+              
                     setTimeout(function () {
                         deferred.resolve();
 
@@ -2262,14 +2306,14 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     });
 
     $scope.$watch('user.addressBlocks', function (newVal) {
-        console.log(newVal);
+     //   console.log(newVal);
 
         if (newVal) {
             $scope.user.Address = '';
 
             $scope.addressBlocks.forEach(function (item, index) {
                 value = "";
-                console.log(index, $scope.user.addressBlocks[index]);
+             //   console.log(index, $scope.user.addressBlocks[index]);
                 if ($scope.user.addressBlocks[index])
                     value = $scope.user.addressBlocks[index];
 
@@ -2460,11 +2504,7 @@ bazarsooAng.controller('productController', function (userService, $scope, $time
     };
 
 
-    $scope.goChat = function (userId) {
-        $location.path('/chat');
-        $location.hash(userId);
-
-    };
+  
 
     $rootScope.$watch(function () {
         return $location.hash();

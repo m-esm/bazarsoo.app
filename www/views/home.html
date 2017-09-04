@@ -5,8 +5,23 @@
 
         <div id="vitrin">
 
+            <div class="buttons">
 
-            <div class="v-block" data-uid="{{vitrin.UserId}}" data-id="{{vitrin.Id}}">
+                <a class="back" ng-click="goBack()">
+                    <i class="fa fa-chevron-left"></i>
+                </a>
+
+                <a class="like {{isInFav(vitrin.Id)?'active':''}}" ng-click="toggleFav(vitrin.Id)">
+
+                </a>
+
+                <a ng-click="goChat(vitrin.UserId)">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+
+            </div>
+
+            <div class="v-block  color-{{vitrin.colorId}}" data-uid="{{vitrin.UserId}}" data-id="{{vitrin.Id}}">
 
 
                 <div class="inner">
@@ -76,11 +91,10 @@
 
     <div ng-hide="location.hash()" class="v-column" ng-repeat="column in columns">
 
-        <div class="v-block v-h-{{vitrin.BlockCount}}" data-id="{{vitrin.Id}}" data-uid="{{vitrin.UserId}}" ng-repeat="vitrin in column">
-
+        <div class="v-block v-h-{{vitrin.BlockCount}} color-{{vitrin.colorId}}" data-id="{{vitrin.Id}}" data-uid="{{vitrin.UserId}}" ng-repeat="vitrin in column">
 
             <div class="inner" ng-click="goVitrin(vitrin.Id)" style="background-image:url('{{vitrin.BannerImage}}')">
-
+                
                 <div class="more">
 
                 </div>
