@@ -299,7 +299,7 @@ function registerHomeController($rootScope, $timeout, $http, $rootScope, $window
 
 
 
- 
+
 
     $rootScope.goProduct = function (productId) {
 
@@ -765,11 +765,13 @@ bazarsooAng.filter('orderChatMessages', function () {
 });
 
 
-bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, userService) {
+bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, userService, authService) {
 
-    $rootScope.goChat = function (userId) {
+    $rootScope.goChat = function (userId, productId) {
         $location.path('/chat');
         $location.hash(userId);
+        if (productId)
+            $location.search('product', productId)
 
     };
 
@@ -987,7 +989,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     $rootScope.apiBase = apiBase;
 
-  
+
 
     $rootScope.contacts = [];
     $rootScope.msgCount = function () {
@@ -995,7 +997,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     };
 
     $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
-       // console.log(Array.isArray(res.data));
+        // console.log(Array.isArray(res.data));
         if (Array.isArray(res.data)) {
 
             $rootScope.msgCount = function () {
@@ -1037,16 +1039,28 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     chub.on("agreeProductPrice", function (model) {
 
+        console.log("agreeProductPrice", model);
+
         var agreement = _.findWhere($rootScope.activeContact.agreements, { ID: model.ID });
-        if (!model.agree) {
-            agreement.user1Agree = false;
-            agreement.user2Agree = false;
-            agreement.count = model.count;
-            agreement.price = model.price;
 
-        }
 
-        $rootScope.$apply();
+        //    if (!model.agree) {
+        agreement.user1Agree = false;
+        agreement.user2Agree = false;
+        agreement.count = model.count;
+        agreement.price = model.price;
+
+
+        agreement.total = agreement.count * agreement.price;
+
+
+        // }
+
+        $timeout(function () {
+
+            $rootScope.$apply();
+
+        });
 
 
     });
@@ -1075,6 +1089,8 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                     if (model.count == 0)
                         model.count = 1;
 
+                    model.total = model.count * model.price;
+
                     $rootScope.activeContact.agreements.push(model);
 
 
@@ -1094,7 +1110,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     chub.on("deleteAgreement", function (agreeId, fromUserId) {
 
-      console.log('deleteAgreement', agreeId);
+        console.log('deleteAgreement', agreeId);
 
         var agreement = _.findWhere($rootScope.activeContact.agreements, { ID: agreeId });
         var index = $rootScope.activeContact.agreements.indexOf(agreement);
@@ -1155,18 +1171,18 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
-   
+
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
 
 
 
-       // console.log("broadcastMessage", userId, message, date);
+        // console.log("broadcastMessage", userId, message, date);
 
         $http.get(apiBase + '/OnlineChat/Chat/UserArrived');
 
         var contact = _.findWhere($rootScope.contacts, { userid: userId });
 
-      //  console.log(contact);
+        //  console.log(contact);
 
         if (contact == undefined)
             contact = {};
@@ -1254,7 +1270,19 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
         var requireLogin = false;
 
+        $rootScope.user = $rootScope.getUser();
 
+        if ($rootScope.user) {
+            var expireIn = $rootScope.user['.expires'];
+            var miliSecondToExpire = moment.duration(moment(expireIn).diff())._milliseconds
+            if (miliSecondToExpire < 60000) {
+
+                console.log('token expired');
+                authService.logOut();
+
+            }
+         
+        }
 
         if (next.templateUrl == "views/home.html") {
             // already going to #login, no redirect needed
@@ -1267,7 +1295,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
             if (requireLogin && !localStorage.user) {
 
-               
+
 
                 $rootScope.showAuth = true;
                 //    $location.path(current);
@@ -1601,14 +1629,14 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
     $scope.calcPriceFields = function (item, field) {
 
-       // console.log(item, field);
+        // console.log(item, field);
 
         if (parseInt(item.count) <= 0)
             item.count = 1;
 
         if (field == 'total') {
-            
-            item.price = parseInt( item.total / item.count);
+
+            item.price = parseInt(item.total / item.count);
 
         } else {
             item.total = item.count * item.price;
@@ -1616,6 +1644,8 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
 
     };
+
+
     $scope.deleteChat = function () {
 
         swal({
@@ -1650,7 +1680,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                     }
                 });
 
-           
+
 
 
             }
@@ -1681,7 +1711,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                     beforeSend: function (xhr, settings) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
                     }
-                }).done(function(){
+                }).done(function () {
                     var index = $rootScope.contacts.indexOf($rootScope.activeContact);
 
 
@@ -1700,7 +1730,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                 //    }
                 //}, function () {
 
-                 
+
 
                 //});
 
@@ -1731,7 +1761,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                     url: apiBase + '/onlinechat/chat/reportchat',
                     data: {
                         contact: $rootScope.activeContact.userid,
-                    report: input
+                        report: input
                     },
                     beforeSend: function (xhr, settings) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
@@ -1824,7 +1854,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         var agreement = _.findWhere($rootScope.activeContact.agreements, { productId: product.rid });
 
         if (agreement) {
-           // console.log(agreement.ID);
+            // console.log(agreement.ID);
             $http.post(apiBase + "/OnlineChat/Chat/DeletePriceAgreement", {
                 ID: agreement.ID
             }).then(function () {
@@ -1872,7 +1902,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
                     $rootScope.activeContact.agreements.push(agreement);
                     $scope.showChoose = false;
-              
+
                     setTimeout(function () {
                         deferred.resolve();
 
@@ -1894,6 +1924,9 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
         return deferred.promise;
     };
+
+
+
 
     $scope.attach = function () {
 
@@ -2004,6 +2037,19 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
                             });
 
+
+                        if ($location.search()) {
+
+                            if ($location.search().product) {
+
+                                $scope.chooseProduct({ rid: $location.search().product });
+                                $location.search('product', '');
+
+
+
+                            }
+
+                        }
 
                     });
 
@@ -2306,14 +2352,14 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     });
 
     $scope.$watch('user.addressBlocks', function (newVal) {
-     //   console.log(newVal);
+        //   console.log(newVal);
 
         if (newVal) {
             $scope.user.Address = '';
 
             $scope.addressBlocks.forEach(function (item, index) {
                 value = "";
-             //   console.log(index, $scope.user.addressBlocks[index]);
+                //   console.log(index, $scope.user.addressBlocks[index]);
                 if ($scope.user.addressBlocks[index])
                     value = $scope.user.addressBlocks[index];
 
@@ -2413,22 +2459,23 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
             //        $('a.refresh-invoices').trigger("click");
             //    });
 
-            $http.get(apiBase + '/vitrin/ui/removeInvoiceItem?id=' + rowId).then(function () {
+            if (isConfirm)
+                $http.get(apiBase + '/vitrin/ui/removeInvoiceItem?id=' + rowId).then(function () {
 
-                userService.init().then(function (_userService) {
-                    $rootScope.userService = _userService;
+                    userService.init().then(function (_userService) {
+                        $rootScope.userService = _userService;
 
-                    $timeout(function () {
-                        $rootScope.$apply();
-                        $scope.getInvoices();
+                        $timeout(function () {
+                            $rootScope.$apply();
+                            $scope.getInvoices();
+                        });
+
+                    }, function () {
                     });
 
-                }, function () {
+
+
                 });
-
-
-
-            });
 
 
         });
@@ -2504,7 +2551,7 @@ bazarsooAng.controller('productController', function (userService, $scope, $time
     };
 
 
-  
+
 
     $rootScope.$watch(function () {
         return $location.hash();
