@@ -776,7 +776,22 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     };
 
     $rootScope.goBack = function () {
-        $window.history.back();
+        console.log('go back', $rootScope.history);
+        var hrefToGo = $rootScope.history.splice(-1);
+
+        if (hrefToGo == location.href.toLowerCase())
+            return $rootScope.goBack();
+
+        if (hrefToGo == false || $rootScope.history.length == 0)
+        {
+            $location.path('/home');
+            $location.hash('');
+
+        } else {
+            location.href = hrefToGo;
+        }
+
+
     };
     // registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location);
     $rootScope.isInFav = function (vid) {
@@ -1265,6 +1280,15 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
 
+        if (!$rootScope.history)
+            $rootScope.history = [];
+
+        if ($rootScope.history[$rootScope.history.length - 1] != location.href.toString())
+            $rootScope.history.push(location.href.toString());
+
+
+
+        console.log($rootScope.history);
 
         $rootScope.showAuth = false;
 
@@ -1281,7 +1305,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                 authService.logOut();
 
             }
-         
+
         }
 
         if (next.templateUrl == "views/home.html") {
