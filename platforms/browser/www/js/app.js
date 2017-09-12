@@ -93,6 +93,9 @@ function onDeviceReady() {
 
 $(function () {
 
+    //$.ajaxSetup({
+    //    headers: { 'X-CSRF-Token': tokenValue }
+    //});
 
     //$.connection.hub.url = 'http://localhost:56824/signalr';
     //var myHub = $.connection.chatHub;
@@ -292,7 +295,161 @@ bazarsooAng.factory('authInterceptorService', ['$q', '$location', function ($q, 
 
     return authInterceptorServiceFactory;
 }]);
+function registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location) {
 
+
+
+
+
+    $rootScope.goProduct = function (productId) {
+
+        $location.path('/product');
+        $location.hash(productId);
+
+    };
+
+    $rootScope.goVitrin = function (vitrinId) {
+
+        $location.path('/home');
+        $location.hash(vitrinId);
+    };
+
+    var getColumns = function () {
+
+        var columnWidth = 180;
+
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
+        var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
+
+
+        var eachColumnHeight = _.reduce($rootScope.vitrins, function (memo, item) {
+
+            return memo + item.BlockCount;
+
+        }, 0) / columnCount;
+
+
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
+
+        var cPointer = 0;
+        $rootScope.vitrins.forEach(function (item, index) {
+
+            if (!columns[cPointer])
+                columns[cPointer] = [];
+
+
+            columns[cPointer].push(item);
+
+            if (cPointer < columnCount - 1) {
+
+                cPointer++;
+
+            } else {
+                cPointer = 0;
+
+            }
+
+
+        });
+
+        return columns;
+
+
+
+    };
+
+    var getProductColumns = function () {
+
+        if (!$rootScope.vitrin)
+            return;
+
+
+        var products = $rootScope.vitrin.products;
+
+        var columnWidth = 180;
+        if ($rootScope.windowWidth <= 380) {
+            columnWidth = 160;
+        }
+
+        var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
+
+        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
+
+        var cPointer = 0;
+
+        products.forEach(function (item, index) {
+
+            if (!columns[cPointer])
+                columns[cPointer] = [];
+
+
+            columns[cPointer].push(item);
+
+            if (cPointer < columnCount - 1) {
+
+                cPointer++;
+
+            } else {
+                cPointer = 0;
+
+            }
+
+
+        });
+
+        return columns;
+
+    };
+
+    $rootScope.$watch('windowWidth', function (newVal) {
+
+        if ($rootScope.vitrins)
+            $rootScope.columns = getColumns();
+
+        if ($rootScope.vitrin)
+            $rootScope.vitrin.productColumns = getProductColumns();
+
+    });
+
+    $rootScope.goProduct = function (product) {
+
+        $location.path('/product');
+        $location.hash(product.rid);
+
+    };
+
+
+    $rootScope.$watch(function () {
+        return $location.hash();
+    }, function (newVal) {
+
+
+        $rootScope.vitrin = $rootScope.getVitrin();
+        if ($rootScope.vitrin)
+            $rootScope.vitrin.productColumns = getProductColumns();
+
+        $timeout(function () {
+            $rootScope.loaded = true;
+        });
+
+
+
+    });
+
+    $rootScope.getVitrin = function () {
+        var model = _.find($rootScope.vitrins, function (item) {
+            return item.Id == $location.hash();
+        });
+        return model;
+    };
+
+    $rootScope.columns = getColumns();
+
+
+}
 bazarsooAng.config(function ($locationProvider, $httpProvider, $routeProvider) {
 
 
@@ -608,8 +765,60 @@ bazarsooAng.filter('orderChatMessages', function () {
 });
 
 
-bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
+bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, userService, authService) {
 
+    $rootScope.goChat = function (userId, productId) {
+        $location.path('/chat');
+        $location.hash(userId);
+        if (productId)
+            $location.search('product', productId)
+
+    };
+
+    $rootScope.goBack = function () {
+        console.log('go back', $rootScope.history);
+        var hrefToGo = $rootScope.history.splice(-1);
+
+        if (hrefToGo == location.href.toLowerCase())
+            return $rootScope.goBack();
+
+        if (hrefToGo == false || $rootScope.history.length == 0)
+        {
+            $location.path('/home');
+            $location.hash('');
+
+        } else {
+            location.href = hrefToGo;
+        }
+
+
+    };
+    // registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location);
+    $rootScope.isInFav = function (vid) {
+
+        if (!$rootScope.userService)
+            return false;
+
+        return _.findWhere($rootScope.userService.favorites, { VitrinId: vid });
+
+    };
+
+    $rootScope.toggleFav = function (vid) {
+
+        $http.post(apiBase + '/Vitrin/Ui/VitrinAddToFavorit', { vitrinId: vid }).then(function () {
+
+
+            userService.init().then(function (_userService) {
+                $rootScope.userService = _userService;
+
+
+
+            }, function () {
+            });
+
+        }, function () { });
+
+    };
 
     $(function () {
         var vibTimeout = 0;
@@ -726,26 +935,76 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
         return JSON.parse(localStorage.getItem('user'));
     };
 
+    function getVitrins() {
+
+        var deferred = $q.defer();
+        var lastUpdate = localStorage.getItem("lastVitrinRequest");
+        if (!lastUpdate)
+            lastUpdate = 1004151373875;
+
+        var duration = moment.duration(moment().diff(parseInt(lastUpdate)));
+        var hours = duration.asHours();
 
 
-    $http.get(apiBase + '/vitrin/api/vitrins').then(function (res) {
+        if (hours < 1) {
+
+            var vitrins = _.shuffle(JSON.parse(localStorage.getItem("vitrins")));
+
+            var res = {
+                data: vitrins
+            };
+
+            deferred.resolve(res);
+
+        } else {
+
+            $http.get(apiBase + '/vitrin/api/vitrins').then(function (res) {
+
+                localStorage.setItem("lastVitrinRequest", Date.now());
+                localStorage.setItem("vitrins", JSON.stringify(res.data));
+
+                deferred.resolve(res);
+
+            });
+
+        }
+
+
+        return deferred.promise;
+
+
+    }
+
+    getVitrins().then(function (res) {
 
         $rootScope.vitrins = res.data;
+
+        $rootScope.vitrins.forEach(function (item, index) {
+            item.colorId = _.random(1, 5);
+        });
+
         $rootScope.getVitrin = function (id) {
 
             return _.findWhere($rootScope.vitrins, { Id: id });
 
         };
 
+        if ($location.path() == "/home") {
+            registerHomeController($rootScope, $timeout, $http, $rootScope, $window, $location);
+        }
+
+        $timeout(function () {
+
+            $rootScope.loaded = true;
+
+        }, 500);
 
     });
+
+
     $rootScope.apiBase = apiBase;
 
-    $timeout(function () {
 
-        $rootScope.loaded = true;
-
-    }, 500);
 
     $rootScope.contacts = [];
     $rootScope.msgCount = function () {
@@ -753,7 +1012,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
     };
 
     $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
-        console.log(Array.isArray(res.data));
+        // console.log(Array.isArray(res.data));
         if (Array.isArray(res.data)) {
 
             $rootScope.msgCount = function () {
@@ -786,20 +1045,37 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
         qs: { 'access_token': access_token }
     });
 
+    //if (access_token)
+    //    $.ajaxSetup({
+    //        headers: { 'Authorization': 'Bearer ' + access_token }
+    //    });
+
     var chub = SignalrConnection.createHubProxy('chatHub');
 
     chub.on("agreeProductPrice", function (model) {
 
+        console.log("agreeProductPrice", model);
+
         var agreement = _.findWhere($rootScope.activeContact.agreements, { ID: model.ID });
-        if (!model.agree) {
-            agreement.user1Agree = false;
-            agreement.user2Agree = false;
-            agreement.count = model.count;
-            agreement.price = model.price;
 
-        }
 
-        $rootScope.$apply();
+        //    if (!model.agree) {
+        agreement.user1Agree = false;
+        agreement.user2Agree = false;
+        agreement.count = model.count;
+        agreement.price = model.price;
+
+
+        agreement.total = agreement.count * agreement.price;
+
+
+        // }
+
+        $timeout(function () {
+
+            $rootScope.$apply();
+
+        });
 
 
     });
@@ -827,6 +1103,8 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
                     if (model.count == 0)
                         model.count = 1;
+
+                    model.total = model.count * model.price;
 
                     $rootScope.activeContact.agreements.push(model);
 
@@ -890,14 +1168,20 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
     });
 
-    chub.on("seen", function (GuidId) {
+    chub.on("seen", function (GuidId, userId, contactId) {
 
+        console.log('seen', contactId, $rootScope.activeContact.userid == contactId);
 
+        if ($rootScope.activeContact.userid == contactId) {
 
-    });
+            $rootScope.activeContact.messages.forEach(function (item) {
 
-    chub.on("devtest", function (data) {
-        console.log('devtest', data);
+                item.Status = 2;
+
+            });
+
+            $rootScope.$apply();
+        }
 
 
     });
@@ -907,17 +1191,23 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
 
 
-        console.log("broadcastMessage", userId, message, date);
+        // console.log("broadcastMessage", userId, message, date);
 
         $http.get(apiBase + '/OnlineChat/Chat/UserArrived');
 
         var contact = _.findWhere($rootScope.contacts, { userid: userId });
+
+        //  console.log(contact);
+
         if (contact == undefined)
             contact = {};
+
         contact.timestamp = Date.now();
         contact.date = date;
         contact.userid = userId;
-        contact.count += 1;
+
+        if ($rootScope.activeContact.userid != userId)
+            contact.count += 1;
 
 
         if (!contact)
@@ -990,15 +1280,45 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, userService) {
 
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
 
+        if (!$rootScope.history)
+            $rootScope.history = [];
+
+        if ($rootScope.history[$rootScope.history.length - 1] != location.href.toString())
+            $rootScope.history.push(location.href.toString());
+
+
+
+        console.log($rootScope.history);
 
         $rootScope.showAuth = false;
 
         var requireLogin = false;
 
+        $rootScope.user = $rootScope.getUser();
+
+        if ($rootScope.user) {
+            var expireIn = $rootScope.user['.expires'];
+            var miliSecondToExpire = moment.duration(moment(expireIn).diff())._milliseconds
+            if (miliSecondToExpire < 60000) {
+
+                console.log('token expired');
+                authService.logOut();
+
+            }
+
+        }
+
+        if (next.templateUrl == "views/home.html") {
+            // already going to #login, no redirect needed
+            $rootScope.loaded = false;
+
+        }
+
         if (next.data) {
             requireLogin = next.data.requireLogin;
 
             if (requireLogin && !localStorage.user) {
+
 
 
                 $rootScope.showAuth = true;
@@ -1331,6 +1651,24 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
 bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, $rootScope, $window, $location) {
 
+    $scope.calcPriceFields = function (item, field) {
+
+        // console.log(item, field);
+
+        if (parseInt(item.count) <= 0)
+            item.count = 1;
+
+        if (field == 'total') {
+
+            item.price = parseInt(item.total / item.count);
+
+        } else {
+            item.total = item.count * item.price;
+        }
+
+
+    };
+
 
     $scope.deleteChat = function () {
 
@@ -1346,19 +1684,26 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         },
         function (isConfirm) {
             if (isConfirm) {
-                $.get(apiBase + '/onlinechat/chat/deleteChat', {
-                    contact: $rootScope.activeContact.userid
-                }, function () {
 
-                    var index = $rootScope.contacts.indexOf($rootScope.activeContact);
+                var index = $rootScope.contacts.indexOf($rootScope.activeContact);
+                $rootScope.contacts.splice(index, 1);
+                var contact = $rootScope.activeContact.userid;
+                $rootScope.activeContact = false;
 
+                $location.hash('');
 
-                    $rootScope.contacts.splice(index, 1);
-                    $rootScope.activeContact = false;
+                $rootScope.$apply();
 
-                    $rootScope.$apply();
-
+                jQuery.ajax({
+                    url: apiBase + '/onlinechat/chat/deleteChat',
+                    data: {
+                        contact: contact
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
                 });
+
 
 
 
@@ -1381,10 +1726,16 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
             closeOnCancel: true
         }, function (isConfirm) {
             if (isConfirm) {
-                $.get(apiBase + '/onlinechat/chat/BlockChat', {
-                    contact: $rootScope.activeContact.userid
-                }, function () {
 
+                jQuery.ajax({
+                    url: apiBase + '/onlinechat/chat/BlockChat',
+                    data: {
+                        contact: $rootScope.activeContact.userid
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
+                }).done(function () {
                     var index = $rootScope.contacts.indexOf($rootScope.activeContact);
 
 
@@ -1392,8 +1743,20 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                     $rootScope.activeContact = false;
 
                     $rootScope.$apply();
-
                 });
+
+
+                //$.get(apiBase + '/onlinechat/chat/BlockChat', {
+                //    contact: $rootScope.activeContact.userid
+                //}, {
+                //    beforeSend: function (xhr, settings) {
+                //        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                //    }
+                //}, function () {
+
+
+
+                //});
 
 
 
@@ -1417,14 +1780,30 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         }, function (input) {
             if (input) {
 
-                $http.post(apiBase + '/onlinechat/chat/reportchat', {
-                    contact: $rootScope.activeContact.userid,
-                    report: input
-                }).then(function (res) {
-
+                jQuery.ajax({
+                    method: 'post',
+                    url: apiBase + '/onlinechat/chat/reportchat',
+                    data: {
+                        contact: $rootScope.activeContact.userid,
+                        report: input
+                    },
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $rootScope.getUser().access_token);
+                    }
+                }).done(function () {
                     swal('گزارش شما ثبت گردید .', 'شماره پیگیری : ' + res.data, 'success');
 
-                }, function () { });
+                });
+
+
+                //$http.post(apiBase + '/onlinechat/chat/reportchat', {
+                //    contact: $rootScope.activeContact.userid,
+                //    report: input
+                //}).then(function (res) {
+
+                //    swal('گزارش شما ثبت گردید .', 'شماره پیگیری : ' + res.data, 'success');
+
+                //}, function () { });
 
 
 
@@ -1499,7 +1878,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         var agreement = _.findWhere($rootScope.activeContact.agreements, { productId: product.rid });
 
         if (agreement) {
-            console.log(agreement.ID);
+            // console.log(agreement.ID);
             $http.post(apiBase + "/OnlineChat/Chat/DeletePriceAgreement", {
                 ID: agreement.ID
             }).then(function () {
@@ -1546,6 +1925,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
 
                     $rootScope.activeContact.agreements.push(agreement);
+                    $scope.showChoose = false;
 
                     setTimeout(function () {
                         deferred.resolve();
@@ -1569,6 +1949,9 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
         return deferred.promise;
     };
 
+
+
+
     $scope.attach = function () {
 
         console.log($scope.attachFile);
@@ -1581,7 +1964,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
             return $location.hash();
         }, function (newVal) {
 
-            if (!newVal)
+            if (!newVal || newVal.length < 20)
                 $rootScope.activeContact = false;
             else {
 
@@ -1623,7 +2006,7 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                 $http.get(apiBase + '/onlinechat/chat/GetHistory?userid=' + newVal).then(function (res) {
 
                     $rootScope.activeContact.messages = JSON.parse(JSON.stringify(res.data).replace(/\/Date/g, "\\\/Date").replace(/\)\//g, "\)\\\/"));
-
+                    $rootScope.activeContact.count = 0;
                     scrollChat();
 
 
@@ -1663,6 +2046,8 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
                                         if (item.count == 0)
                                             item.count = 1;
 
+                                        $scope.calcPriceFields(item, '');
+
 
 
                                     }, function () { });
@@ -1676,6 +2061,19 @@ bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, 
 
                             });
 
+
+                        if ($location.search()) {
+
+                            if ($location.search().product) {
+
+                                $scope.chooseProduct({ rid: $location.search().product });
+                                $location.search('product', '');
+
+
+
+                            }
+
+                        }
 
                     });
 
@@ -1978,14 +2376,14 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     });
 
     $scope.$watch('user.addressBlocks', function (newVal) {
-        console.log(newVal);
+        //   console.log(newVal);
 
         if (newVal) {
             $scope.user.Address = '';
 
             $scope.addressBlocks.forEach(function (item, index) {
                 value = "";
-                console.log(index, $scope.user.addressBlocks[index]);
+                //   console.log(index, $scope.user.addressBlocks[index]);
                 if ($scope.user.addressBlocks[index])
                     value = $scope.user.addressBlocks[index];
 
@@ -2085,22 +2483,23 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
             //        $('a.refresh-invoices').trigger("click");
             //    });
 
-            $http.get(apiBase + '/vitrin/ui/removeInvoiceItem?id=' + rowId).then(function () {
+            if (isConfirm)
+                $http.get(apiBase + '/vitrin/ui/removeInvoiceItem?id=' + rowId).then(function () {
 
-                userService.init().then(function (_userService) {
-                    $rootScope.userService = _userService;
+                    userService.init().then(function (_userService) {
+                        $rootScope.userService = _userService;
 
-                    $timeout(function () {
-                        $rootScope.$apply();
-                        $scope.getInvoices();
+                        $timeout(function () {
+                            $rootScope.$apply();
+                            $scope.getInvoices();
+                        });
+
+                    }, function () {
                     });
 
-                }, function () {
+
+
                 });
-
-
-
-            });
 
 
         });
@@ -2135,172 +2534,9 @@ bazarsooAng.controller('accountController', function ($scope, $timeout, $http, u
     };
 });
 
+
 bazarsooAng.controller('homeController', function ($scope, $timeout, $http, $rootScope, $window, $location) {
 
-
-    $scope.isInFav = function (vid) {
-
-        if (!$rootScope.userService)
-            return false;
-
-        return _.findWhere($rootScope.userService.favorites, { VitrinId: vid });
-
-    };
-
-    $scope.goProduct = function (productId) {
-
-        $location.path('/product');
-        $location.hash(productId);
-
-    };
-
-    $scope.goVitrin = function (vitrinId) {
-
-        $location.path('/home');
-        $location.hash(vitrinId);
-    };
-
-    var getColumns = function () {
-
-        var columnWidth = 180;
-
-        if ($rootScope.windowWidth <= 380) {
-            columnWidth = 160;
-        }
-
-        var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
-
-
-        var eachColumnHeight = _.reduce($scope.vitrins, function (memo, item) {
-
-            return memo + item.BlockCount;
-
-        }, 0) / columnCount;
-
-
-        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
-
-        var cPointer = 0;
-        $scope.vitrins.forEach(function (item, index) {
-
-            if (!columns[cPointer])
-                columns[cPointer] = [];
-
-
-            columns[cPointer].push(item);
-
-            if (cPointer < columnCount - 1) {
-
-                cPointer++;
-
-            } else {
-                cPointer = 0;
-
-            }
-
-
-        });
-
-        return columns;
-
-
-
-    };
-
-    var getProductColumns = function () {
-
-        if (!$scope.vitrin)
-            return;
-
-        var products = $scope.vitrin.products;
-
-        var columnWidth = 180;
-        if ($rootScope.windowWidth <= 380) {
-            columnWidth = 160;
-        }
-
-        var columnCount = Math.floor($rootScope.windowWidth / columnWidth);
-
-        var columns = []; for (var i = 0; i < columnCount; i++) { columns[i] = []; }
-
-        var cPointer = 0;
-
-        products.forEach(function (item, index) {
-
-            if (!columns[cPointer])
-                columns[cPointer] = [];
-
-
-            columns[cPointer].push(item);
-
-            if (cPointer < columnCount - 1) {
-
-                cPointer++;
-
-            } else {
-                cPointer = 0;
-
-            }
-
-
-        });
-
-        return columns;
-
-    };
-
-    $rootScope.$watch('windowWidth', function (newVal) {
-
-        if ($scope.vitrins)
-            $scope.columns = getColumns();
-
-        if ($scope.vitrin)
-            $scope.vitrin.productColumns = getProductColumns();
-
-    });
-
-    $scope.goProduct = function (product) {
-
-        $location.path('/product');
-        $location.hash(product.rid);
-
-    };
-    $timeout(function () {
-        $rootScope.loaded = false;
-    }, 501);
-
-    $http.get(apiBase + '/vitrin/api/vitrins').then(function (res) {
-
-
-        $scope.vitrins = res.data;
-
-        $timeout(function () {
-
-            $rootScope.loaded = true;
-
-        }, 500);
-
-        $rootScope.$watch(function () {
-            return $location.hash();
-        }, function (newVal) {
-
-
-            $scope.vitrin = $scope.getVitrin();
-            if ($scope.vitrin)
-                $scope.vitrin.productColumns = getProductColumns();
-
-        });
-
-        $scope.getVitrin = function () {
-            var model = _.find($scope.vitrins, function (item) {
-                return item.Id == $location.hash();
-            });
-            return model;
-        };
-
-        $scope.columns = getColumns();
-
-    });
 
 });
 bazarsooAng.controller('productController', function (userService, $scope, $timeout, $http, $rootScope, $window, $location) {
@@ -2339,11 +2575,7 @@ bazarsooAng.controller('productController', function (userService, $scope, $time
     };
 
 
-    $scope.goChat = function (userId) {
-        $location.path('/chat');
-        $location.hash(userId);
 
-    };
 
     $rootScope.$watch(function () {
         return $location.hash();

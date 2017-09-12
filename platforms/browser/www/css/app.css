@@ -173,6 +173,24 @@ button,
 #account ul li:last-child {
   border-bottom: none;
 }
+#vitrin .vitrin-info {
+  background: #f2ede0;
+  width: calc(100% - 10px);
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 5px;
+  line-height: 26px;
+  margin-top: -5px;
+}
+#vitrin .vitrin-info .inner {
+  padding: 10px 0;
+}
+#vitrin .vitrin-info label {
+  font-weight: bold;
+}
+#vitrin .vitrin-info label:after {
+  content: ' : ';
+}
 #search-page {
   padding-bottom: 300px;
 }
@@ -290,6 +308,7 @@ button,
   border-radius: 5px;
   overflow: auto;
   margin-top: 10px;
+  padding-bottom: 80px;
 }
 #chat-page .selectProducts .product {
   background: #f2ede0;
@@ -766,7 +785,7 @@ button,
 #chat-page .input-box .attach-button {
   color: #07baab;
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   right: 10px;
   height: 40px;
   line-height: 40px;
@@ -797,10 +816,12 @@ button,
   display: block;
   content: ' ';
 }
-#product-page {
+#product-page,
+#vitrin {
   padding-top: 40px;
 }
-#product-page .buttons {
+#product-page .buttons,
+#vitrin .buttons {
   padding: 10px 20px;
   background: #f2ede0;
   position: fixed;
@@ -808,8 +829,10 @@ button,
   left: 0;
   width: 100%;
   box-sizing: border-box;
+  z-index: 99;
 }
-#product-page .buttons a {
+#product-page .buttons a,
+#vitrin .buttons a {
   height: 30px;
   width: 30px;
   line-height: 30px;
@@ -823,16 +846,19 @@ button,
   box-sizing: border-box;
   float: right;
 }
-#product-page .buttons a.back {
+#product-page .buttons a.back,
+#vitrin .buttons a.back {
   float: left;
   background: #07baab;
   color: #fff;
 }
-#product-page .buttons a.like {
+#product-page .buttons a.like,
+#vitrin .buttons a.like {
   background-image: url(../img/icon_off.png);
   background-size: 100%;
 }
-#product-page .buttons a.like.active {
+#product-page .buttons a.like.active,
+#vitrin .buttons a.like.active {
   background-image: url(../img/icon_on.png);
 }
 .product-page {
@@ -1131,6 +1157,18 @@ body.iOS #home {
   width: calc(100% - 10px);
   margin: 15px auto;
   background-color: #f2ede0;
+}
+.v-block.color-4 {
+  background: #f2ede0;
+}
+.v-block.color-1 {
+  background: #eee8d8;
+}
+.v-block.color-2 {
+  background: #e8e1d0;
+}
+.v-block.color-3 {
+  background: #e1d9c6;
 }
 ::-webkit-scrollbar {
   width: 0px;

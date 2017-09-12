@@ -5,14 +5,29 @@
 
         <div id="vitrin">
 
+            <div class="buttons">
 
-            <div class="v-block"  data-uid="{{vitrin.UserId}}" data-id="{{vitrin.Id}}">
+                <a class="back" ng-click="goBack()">
+                    <i class="fa fa-chevron-left"></i>
+                </a>
+
+                <a class="like {{isInFav(vitrin.Id)?'active':''}}" ng-click="toggleFav(vitrin.Id)">
+
+                </a>
+
+                <a ng-click="goChat(vitrin.UserId)">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+
+            </div>
+
+            <div class="v-block  color-{{vitrin.colorId}}" data-uid="{{vitrin.UserId}}" data-id="{{vitrin.Id}}">
 
 
                 <div class="inner">
                     <img ng-src="{{vitrin.BannerImage}}" />
 
-                    <div class="more">
+                    <!--<div class="more">
 
                     </div>
 
@@ -21,6 +36,24 @@
                     </div>
 
                     <div class="icon icon-3">
+                    </div>-->
+
+                </div>
+
+                <div class="vitrin-info">
+
+                    <div class="inner">
+                        <ul>
+                            <li>
+                                <label>صاحب امتیاز</label>
+                                <span class="owner">{{vitrin.Owner}}</span>
+
+                            </li>
+                            <li>
+                                <label>ویترین</label>
+                                <span class="vitrin-name">{{vitrin.Name}}</span>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
@@ -28,12 +61,13 @@
 
             </div>
 
+          
 
             <div class="products">
 
                 <div ng-repeat="column in vitrin.productColumns" class="product-column">
                     <div ng-repeat="product in column" class="product" data-rid="{{product.rid}}">
-                        <div class="inner"  ng-click="goProduct(product)">
+                        <div class="inner" ng-click="goProduct(product)">
                             <img ng-src="http://bazarsoo.com/{{product.image}}?width=140" />
                             <div class="info">
                                 <h3>
@@ -46,7 +80,7 @@
                         </div>
                     </div>
                 </div>
-             
+
 
             </div>
 
@@ -57,11 +91,10 @@
 
     <div ng-hide="location.hash()" class="v-column" ng-repeat="column in columns">
 
-        <div class="v-block v-h-{{vitrin.BlockCount}}" data-id="{{vitrin.Id}}" data-uid="{{vitrin.UserId}}" ng-repeat="vitrin in column">
+        <div class="v-block v-h-{{vitrin.BlockCount}} color-{{vitrin.colorId}}" data-id="{{vitrin.Id}}" data-uid="{{vitrin.UserId}}" ng-repeat="vitrin in column">
 
-
-            <div class="inner" ng-click="goVitrin(vitrin.Id)" style="background-image:url('{{vitrin.BannerImage}}?width=140')">
-
+            <div class="inner" ng-click="goVitrin(vitrin.Id)" style="background-image:url('{{vitrin.BannerImage}}')">
+                
                 <div class="more">
 
                 </div>
