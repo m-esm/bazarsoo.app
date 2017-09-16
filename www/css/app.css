@@ -1203,12 +1203,12 @@ body.iOS #home {
   position: relative;
   min-height: 30px;
   overflow-x: scroll;
-  margin-bottom: -5px;
   position: fixed;
   bottom: 140px;
   background: #fff;
   border-top: 1px solid #d5d0c2;
   z-index: 22;
+  width: 100%;
 }
 #search-result .suggestions ul {
   line-height: 30px;
