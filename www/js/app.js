@@ -93,6 +93,14 @@ function onDeviceReady() {
 
 $(function () {
 
+    setInterval(function () {
+
+        if ($('.suggestions')[0] != undefined) {
+            $('.suggestions').css('bottom', ($('.search-box').height() + 50) + "px");
+
+        }
+
+    }, 500);
     //$.ajaxSetup({
     //    headers: { 'X-CSRF-Token': tokenValue }
     //});
@@ -244,6 +252,11 @@ setInterval(function () {
     splitBy3();
 
 }, 1000);
+
+
+
+
+
 
 
 
@@ -767,6 +780,20 @@ bazarsooAng.filter('orderChatMessages', function () {
 
 bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, userService, authService) {
 
+
+    if (location.host == "m.bazarsoo.com")
+        $http.get('http://bazarsoo.com/contents/application?ajax=true').then(function (res) {
+
+            swal({
+                title: '',
+                type: 'info',
+                html: true,
+                text: res.data
+            });
+
+
+        });
+
     $rootScope.goChat = function (userId, productId) {
         $location.path('/chat');
         $location.hash(userId);
@@ -782,8 +809,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
         if (hrefToGo == location.href.toLowerCase())
             return $rootScope.goBack();
 
-        if (hrefToGo == false || $rootScope.history.length == 0)
-        {
+        if (hrefToGo == false || $rootScope.history.length == 0) {
             $location.path('/home');
             $location.hash('');
 
@@ -1595,56 +1621,44 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
         $('input[type=search]').blur();
 
-        $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + searchWords).then(function (res) {
-
-            $scope.suggestions = res.data;
-
-        }, function () {
-
-        });
-
+        $scope.suggestions = false;
         $scope.products = [];
+
+        if (searchWords != '')
+            $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + searchWords).then(function (res) {
+
+                $scope.suggestions = res.data;
+
+            }, function () {
+
+            });
+
 
         $http.get(apiBase + '/vitrin/ui/searchProducts?json=true&term=' + searchWords).then(function (res) {
 
 
-            res.data.Result.forEach(function (pid, index) {
+            $http.post(apiBase + '/vitrin/ui/products', { pids: res.data.Result }).then(function (res2) {
 
-                $http.post(apiBase + '/vitrin/ui/products', { pid: pid }).then(function (res2) {
+                res2.data.forEach(function (product, index) {
 
-                    if (!_.findWhere($scope.products, { rid: res2.data.rid }))
-                        $scope.products.push(res2.data);
-
-                    $scope.productColumns = getProductColumns();
+                    if (!_.findWhere($scope.products, { rid: product.rid }))
+                        $scope.products.push(product);
 
                 });
 
-            });
+                $scope.productColumns = getProductColumns();
 
+            }, function () {
+
+            });
 
         }, function () {
 
         });
 
     }, true);
-    //$scope.searchAC = function (word) {
-
-    //    var deferred = $q.defer();
-
-    //    $http.post(apiBase + '/vitrin/ui/searchProducts?suggestions=true&term=' + word).then(function (res) {
-
-    //        deferred.resolve(res.data);
-
-    //    }, function () {
-
-    //    });
 
 
-
-    //    return deferred.promise;
-
-
-    //};
 });
 
 
