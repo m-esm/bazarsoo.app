@@ -96,7 +96,7 @@ $(function () {
     setInterval(function () {
 
         if ($('.suggestions')[0] != undefined) {
-            $('.suggestions').css('bottom', ($('.search-box').height() + 50) + "px");
+            $('.suggestions').css('bottom', ($('.search-box').height() + 55) + "px");
 
         }
 
