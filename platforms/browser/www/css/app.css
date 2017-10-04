@@ -59,6 +59,23 @@ button,
   direction: rtl;
   text-align: right;
 }
+#dlapp {
+  text-align: center;
+}
+#dlapp h3 {
+  line-height: 40px;
+  border-bottom: 1px solid #ccc;
+  font-size: 20px;
+  padding-bottom: 10px;
+}
+#dlapp ul.links {
+  padding: 0;
+  margin: 20px 0;
+}
+#dlapp ul.links li {
+  display: inline-block;
+  margin: 0 10px;
+}
 @keyframes startChat {
   from {
     transform-origin: bottom center;
@@ -1181,12 +1198,17 @@ body.iOS #home {
   background: transparent;
 }
 #search-result .suggestions {
-  padding-left: 20px;
+  padding-left: 5px;
   margin-top: 10px;
   position: relative;
   min-height: 30px;
   overflow-x: scroll;
-  margin-bottom: -5px;
+  position: fixed;
+  bottom: 140px;
+  background: #fff;
+  border-top: 1px solid #d5d0c2;
+  z-index: 22;
+  width: 100%;
 }
 #search-result .suggestions ul {
   line-height: 30px;

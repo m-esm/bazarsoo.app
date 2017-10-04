@@ -48,7 +48,7 @@
                 <div class="name">{{item.product.name}}</div>
                 <form class="price-agreement">
                     <div class="input-group">
-                        <label> قیمت واحد (تومان)</label>
+                        <label> قیمت واحد (ریال)</label>
                         <span class="titler" ng-show='focusOn == "price"'>
                             {{item.price | currency : '':0}}
                         </span>
@@ -62,7 +62,7 @@
                         <input type="text" ng-focus="focusOn = 'count'" ng-change="calcPriceFields(item,'count')" ng-blur="focusOn = ''" class="count money-input" ng-readonly="agreementWaiting(item)" ng-model="item.count" min="1" placeholder="تعداد">
                     </div>
                     <div class="input-group">
-                        <label> قیمت کل (تومان)</label>
+                        <label> قیمت کل (ریال)</label>
                         <span class="titler" ng-show='focusOn == "total"'>
                             {{item.total | currency : '':0}}
                         </span>

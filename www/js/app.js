@@ -27,14 +27,14 @@ apiBase = 'http://bazarsoo.com';
 
 
 function onDeviceReady() {
-
-
+ 
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};
     phoneService.vibrate = navigator.vibrate;
-
-
+    //window.plugin.notification.local.hasPermission(function (granted) {
+    //    console.log('Permission has been granted: ' + granted);
+    //});
     //console.warn("testNotifications Started");
     //console.warn(cordova.plugins.notification);
     //// Checks for permission
