@@ -1,5 +1,30 @@
 ﻿/// <reference path="../vendors/bower_components/angular/angular.js" />
 
+const resizeImage = function (img, resizeWidth, callback) {
+    var img = document.getElementById('avatar');
+    var type = 'image/jpeg';
+    var quality = 0.92;
+
+    img.onload = function () {
+        var oc = document.createElement('canvas'), octx = oc.getContext('2d');
+        oc.width = img.width;
+        oc.height = img.height;
+        octx.drawImage(img, 0, 0);
+        while (oc.width * 0.5 > resizeWidth) {
+            oc.width *= 0.5;
+            oc.height *= 0.5;
+            octx.drawImage(oc, 0, 0, oc.width, oc.height);
+        }
+
+        oc.width = resizeWidth;
+        oc.height = oc.width * img.height / img.width;
+        octx.drawImage(img, 0, 0, oc.width, oc.height);
+        callback(oc.toDataURL(type, quality));
+
+    };
+
+};
+
 swal.setDefaults({ confirmButtonText: 'بسیار خب' });
 
 phoneService = false;
@@ -27,7 +52,7 @@ apiBase = 'http://bazarsoo.com';
 
 
 function onDeviceReady() {
- 
+
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};
@@ -93,6 +118,121 @@ function onDeviceReady() {
 
 $(function () {
 
+    $(document).on("click touchstart", '#changePasswordWithCode', function () {
+        var model = {};
+        swal({
+            title: "تغییر رمز عبور !",
+            text: "درصورتی که از قبل درخواست فراموشی رمز داده اید و کد پیامک شده را دریافت کرده اید شماره موبایل خود را وارد کنید :",
+            type: "input",
+            showCancelButton: true,
+            cancelButtonText: 'انصراف',
+            closeOnConfirm: false,
+            animation: "slide-from-top",
+            inputPlaceholder: "آدرس ایمیل یا شماره موبایل"
+        },
+         function (inputValue) {
+             if (inputValue === false) return false;
+
+             model.Email = inputValue;
+
+
+             swal({
+                 title: "تغییر رمز عبور !",
+                 text: "کد دریافتی را وارد کنید",
+                 type: "input",
+                 showCancelButton: true,
+                 cancelButtonText: 'انصراف',
+                 closeOnConfirm: false,
+                 animation: "slide-from-top",
+                 inputPlaceholder: "کد دریافتی"
+             }, function (inputValue) {
+                 if (inputValue === false) return false;
+
+                 model.Code = inputValue;
+
+
+                 swal({
+                     title: "تغییر رمز عبور !",
+                     text: "رمز عبور جدید را وارد کنید",
+                     type: "input",
+                     showCancelButton: true,
+                     cancelButtonText: 'انصراف',
+                     closeOnConfirm: false,
+                     animation: "slide-from-top",
+                     inputPlaceholder: "رمز جدید",
+                     inputType: 'password'
+
+                 }, function (inputValue) {
+
+                     if (inputValue === false) return false;
+
+                     model.Password = inputValue;
+                     model.ConfirmPassword = inputValue;
+
+
+                     $.ajax({
+                         url: apiBase + "/manage/auth/ResetPassword",
+                         type: 'POST',
+                         data: model
+                     }).done(function (data) {
+                         if (data.result)
+                             swal("با تشکر", data.msg);
+                         else {
+                             var error = data.msg;
+
+                             if (Array.isArray(data.msg)) {
+                                 error = "";
+                                 $.each(data.msg,
+                                     function (index, item) {
+                                         error += item + ". ";
+                                     });
+                             }
+                             swal({ title: "خطا !", text: error, type: "error" });
+                         }
+                     }).error(function (data) {
+
+                         console.log(data.msg);
+                         swal({ title: "خطا !", text: data.msg, type: "error" });
+                     });
+
+
+                 });
+
+
+
+             });
+
+
+
+         });
+
+    });
+
+
+    $(document).on('change', " .sp-pic input[type=file]", function (e) {
+        console.log('onnnnnnn');
+        var reader = new FileReader();
+        $('.sp-pic a.btn').toggle();
+
+        reader.onload = function (loadEvent) {
+            $('.sp-pic .avatar').attr('src', loadEvent.target.result);
+
+            resizeImage(document.getElementById('avatar'), 120, function (dataURI) {
+
+                $('.sp-pic .avatar').attr('src', dataURI);
+
+
+            });
+
+
+
+        }
+
+        reader.readAsDataURL(this.files[0]);
+    });
+
+
+
     setInterval(function () {
 
         if ($('.suggestions')[0] != undefined) {
@@ -134,13 +274,13 @@ $(function () {
 
         swal({
             title: "فراموشی رمز عبور !",
-            text: "لطفا ایمیل خود را وارد کنید",
+            text: "لطفا ایمیل یا شماره موبایل خود را وارد کنید",
             type: "input",
             showCancelButton: true,
             cancelButtonText: 'انصراف',
             closeOnConfirm: false,
             animation: "slide-from-top",
-            inputPlaceholder: "آدرس ایمیل"
+            inputPlaceholder: "ایمیل یا شماره موبایل"
         },
             function (inputValue) {
                 if (inputValue === false) return false;
@@ -159,16 +299,19 @@ $(function () {
                         if (data.result)
                             swal("با تشکر", data.msg);
                         else {
-                            var error;
-                            $.each(data.msg,
-                                function (index, item) {
-                                    error += item + "</br>";
-                                });
+                            var error = data.msg;
 
+                            if (Array.isArray(data.msg)) {
+                                error = "";
+                                $.each(data.msg,
+                                    function (index, item) {
+                                        error += item + "</br>";
+                                    });
+                            }
                             swal({ title: "خطا !", text: error, type: "error" });
                         }
                     }).error(function () {
-                        swal({ title: "خطا !", text: "ارسال ایمیل ناموفق بود لطفا بعدا دوباره تلاش کنید", type: "error" });
+                        swal({ title: "خطا !", text: "ارسال ایمیل/پیامک ناموفق بود لطفا بعدا دوباره تلاش کنید", type: "error" });
                     });
 
             });
@@ -176,14 +319,14 @@ $(function () {
 
     $(document).on("click touchstart", '#confirmPassword', function () {
         swal({
-            title: "فعال سازی ایمیل !",
-            text: "لطفا ایمیل خود را جهت فعال سازی وارد کنید",
+            title: "فعال سازی اکانت !",
+            text: "لطفا ایمیل یا شماره موبایل خود را جهت فعال سازی وارد کنید",
             type: "input",
             showCancelButton: true,
             cancelButtonText: 'انصراف',
             closeOnConfirm: false,
             animation: "slide-from-top",
-            inputPlaceholder: "آدرس ایمیل"
+            inputPlaceholder: "ایمیل یا شماره موبایل"
         },
           function (inputValue) {
               if (inputValue === false) return false;
@@ -207,7 +350,7 @@ $(function () {
                           swal({ title: "خطا !", text: data.msg, type: "error" });
                       }
                   }).error(function () {
-                      swal({ title: "خطا !", text: "ارسال ایمیل ناموفق بود لطفا بعدا دوباره تلاش کنید", type: "error" });
+                      swal({ title: "خطا !", text: "ارسال ایمیل/پیامک ناموفق بود لطفا بعدا دوباره تلاش کنید", type: "error" });
                   });
 
           });
@@ -584,6 +727,29 @@ bazarsooAng.factory('userService', function ($http, $q) {
 
     };
 
+    _getAccount = function () {
+
+        var deferred = $q.defer();
+
+
+        $http.get(apiBase + '/vitrin/api/account').then(function (res2) {
+            if (res2.data.Id) {
+
+                var account = _.extend(JSON.parse(localStorage.getItem('user')), res2.data);
+
+                localStorage.setItem('user', JSON.stringify(account));
+
+            }
+
+            deferred.resolve();
+
+        });
+
+        return deferred.promise;
+
+
+    };
+
     var init = function () {
 
         userServiceFactory = {
@@ -599,6 +765,7 @@ bazarsooAng.factory('userService', function ($http, $q) {
             deferred.reject();
         else
             $q.all(
+                _getAccount(),
                _getInvoices(),
                _getCart(),
                _getFavorites()).then(function () {
@@ -847,6 +1014,45 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     };
 
     $(function () {
+
+
+        $(document).on('click', ".sp-pic a", function (e) {
+
+
+            jQuery.ajax({
+                url: apiBase + '/vitrin/register/saveAvatar',
+                method: 'POST',
+                data: {
+                    avatar: $('.sp-pic .avatar').attr('src')
+                },
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + JSON.parse(localStorage.getItem('user')).access_token);
+                }
+            }).done(function () {
+
+
+                swal({
+                    type: 'success',
+                    title: '',
+                    text: 'تصویر پروفایل شما ذخیره شد !'
+                }, function () {
+                    $('.sp-pic a').hide();
+
+                });
+
+
+
+                userService.init().then(function (_userService) {
+                    $rootScope.userService = _userService;
+
+                }, function () {
+                });
+
+
+
+            });
+        });
+
         var vibTimeout = 0;
         var littleVibTimeout = 0;
         $(document).on('touchstart mousedown', '.v-block .more', function (e) {
@@ -939,8 +1145,6 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
                             userService.init().then(function (_userService) {
                                 $rootScope.userService = _userService;
-
-
 
                             }, function () {
                             });
