@@ -56,9 +56,25 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
-    cordova.plugins.backgroundMode.enable();
+    cordova.plugins.backgroundMode.setDefaults({ silent: true })
+    cordova.plugins.backgroundMode.configure({})
+
+    cordova.plugins.backgroundMode.on('activate', function () {
+        cordova.plugins.backgroundMode.disableWebViewOptimizations();
+    });
+
+    cordova.plugins.backgroundMode.on('deactivate', function () {
+        cordova.plugins.backgroundMode.enableWebViewOptimizations();
+    });
+
+    cordova.plugins.backgroundMode.on('enable', function () {
+    });
+
+
     cordova.plugins.backgroundMode.overrideBackButton();
     cordova.plugins.backgroundMode.excludeFromTaskList();
+
+    cordova.plugins.backgroundMode.enable();
 
     Notification.requestPermission(function (permission) {
 
