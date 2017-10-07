@@ -53,16 +53,32 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
-    cordova.plugins.notification.local.hasPermission(function (granted) {
-        alert(granted);
 
-        console.log(granted);
 
-        cordova.plugins.notification.local.schedule({
-            title :'Hello',
-            text: "Delayed Notification",
-        });
+    Notification.requestPermission(function (permission) {
+
+        console.log('permission !!!!!!!!!',permission);
+        // If the user accepts, let’s create a notification
+        if (permission === "granted") {
+            var notification = new Notification("My title", {
+                tag: "message1", 
+                body: "My body" 
+            }); 
+            notification.onshow  = function() { console.log("show"); };
+            notification.onclose = function() { console.log("close"); };
+            notification.onclick = function() { console.log("click"); };
+        }
     });
+    //window.FirebasePlugin.getToken(function (token,err) {
+
+    //    // save this server-side and use it to push notifications to this device
+    //    console.log('firebase !!!!!!!!',token,err);
+    //}, function (error) {
+    //    console.error(error);
+    //});
+    //window.FirebasePlugin.hasPermission(function (data) {
+    //    console.log('zzzzz firebase ' ,data.isEnabled);
+    //});
 
   
 
