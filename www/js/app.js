@@ -1479,20 +1479,33 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
             });
             sentNotifications = [];
+            $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
+           
+                if (Array.isArray(res.data)) {
 
-            var notification = new Notification('گفت و گوی بر خط بازارسو', {
-                tag: "message_" + guid,
-                body: "شما " + ($rootScope.msgCount() + 1) + " پیام خوانده نشده دارید !"
+                  var msgCount = function () {
+                        return _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
+                    };
+
+                  var notification = new Notification('گفت و گوی بر خط بازارسو', {
+                      tag: "message_" + guid,
+                      body: "شما " + msgCount() + " پیام خوانده نشده دارید !"
+                  });
+
+                  notification.onclick = function () {
+
+                      $location.path('/chat');
+
+                  };
+
+                  sentNotifications.push(notification);
+                }
+
+            }, function () {
             });
 
-            notification.onclick = function () {
 
-
-                $location.path('/chat');
-
-            };
-
-            sentNotifications.push(notification);
+         
 
         }
 
