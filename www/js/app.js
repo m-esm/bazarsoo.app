@@ -56,7 +56,7 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
-    cordova.plugins.backgroundMode.enable();
+   // cordova.plugins.backgroundMode.enable();
   //  cordova.plugins.backgroundMode.overrideBackButton();
    // cordova.plugins.backgroundMode.excludeFromTaskList();
 
