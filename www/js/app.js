@@ -1449,7 +1449,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
-  de
+ 
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
     

@@ -56,7 +56,9 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
-
+   // cordova.plugins.backgroundMode.enable();
+  //  cordova.plugins.backgroundMode.overrideBackButton();
+   // cordova.plugins.backgroundMode.excludeFromTaskList();
 
     //Notification.requestPermission(function (permission) {
 
@@ -1447,13 +1449,15 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
-  
+ 
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
     
 
         if ($location.path() != '/chat')
             if ("Notification" in window) {
+
+                cordova.plugins.backgroundMode.wakeUp();
 
                 var notification = new Notification(username, {
                     tag: "message_" + guid,
@@ -1919,6 +1923,13 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
 
 bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, $rootScope, $window, $location) {
+
+    sentNotifications.forEach(function (item, index) {
+
+        item.close();
+
+    });
+    sentNotifications = [];
 
     $scope.calcPriceFields = function (item, field) {
 
