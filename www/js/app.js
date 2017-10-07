@@ -25,6 +25,9 @@ const resizeImage = function (img, resizeWidth, callback) {
 
 };
 
+var sentNotifications = [];
+
+
 swal.setDefaults({ confirmButtonText: 'بسیار خب' });
 
 phoneService = false;
@@ -53,22 +56,24 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
+    cordova.plugins.backgroundMode.enable();
+    cordova.plugins.backgroundMode.overrideBackButton();
+    cordova.plugins.backgroundMode.excludeFromTaskList();
+
+    //Notification.requestPermission(function (permission) {
+
+    //    if (permission === "granted") {
+    //        var notification = new Notification("My title", {
+    //            tag: "message1", 
+    //            body: "My body" 
+    //        });
 
 
-    Notification.requestPermission(function (permission) {
-
-        if (permission === "granted") {
-            var notification = new Notification("My title", {
-                tag: "message1", 
-                body: "My body" 
-            });
-
-
-            notification.onshow  = function() { console.log("show"); };
-            notification.onclose = function() { console.log("close"); };
-            notification.onclick = function() { console.log("click"); };
-        }
-    });
+    //        notification.onshow  = function() { console.log("show"); };
+    //        notification.onclose = function() { console.log("close"); };
+    //        notification.onclick = function() { console.log("click"); };
+    //    }
+    //});
     //window.FirebasePlugin.getToken(function (token,err) {
 
     //    // save this server-side and use it to push notifications to this device
@@ -80,7 +85,7 @@ function onDeviceReady() {
     //    console.log('zzzzz firebase ' ,data.isEnabled);
     //});
 
-  
+
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};
@@ -1444,22 +1449,32 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
+  de
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
-
-        var notification = new Notification(username, {
-            tag: "message_" + guid,
-            body: message
-        });
-
-        notification.onshow = function () {
-
-
-            $location.path('/chat');
-            $location.hash(userId);
-
-        };
     
+
+        if ($location.path() != '/chat')
+            if ("Notification" in window) {
+
+                cordova.plugins.backgroundMode.wakeUp();
+
+                var notification = new Notification(username, {
+                    tag: "message_" + guid,
+                    body: message.MessageDescrp
+                });
+
+                notification.onshow = function () {
+
+
+                    $location.path('/chat');
+                    $location.hash(userId);
+
+                };
+
+                sentNotifications.push(notification);
+
+            }
 
         // console.log("broadcastMessage", userId, message, date);
 
