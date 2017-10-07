@@ -1482,7 +1482,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
             var notification = new Notification('گفت و گوی بر خط بازارسو', {
                 tag: "message_" + guid,
-                body: "شما " + $rootScope.msgCount() + " پیام خوانده نشده دارید !"
+                body: "شما " + ($rootScope.msgCount() + 1) + " پیام خوانده نشده دارید !"
             });
 
             notification.onclick = function () {
