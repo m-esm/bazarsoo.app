@@ -58,11 +58,11 @@ function onDeviceReady() {
 
     cordova.plugins.backgroundMode.enable();
     cordova.plugins.backgroundMode.overrideBackButton();
-     cordova.plugins.backgroundMode.excludeFromTaskList();
+    cordova.plugins.backgroundMode.excludeFromTaskList();
 
-     Notification.requestPermission(function (permission) {
+    Notification.requestPermission(function (permission) {
 
-     });
+    });
     //    if (permission === "granted") {
     //        var notification = new Notification("My title", {
     //            tag: "message1", 
@@ -1450,29 +1450,35 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
- 
+
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
-    
-
-        if ($location.path() != '/chat'){
-
-                var notification = new Notification(username, {
-                    tag: "message_" + guid,
-                    body: message.MessageDescrp
-                });
-
-                notification.onclick = function () {
 
 
-                    $location.path('/chat');
-                    $location.hash(userId);
+        if ($location.path() != '/chat') {
 
-                };
+            sentNotifications.forEach(function (item, index) {
 
-                sentNotifications.push(notification);
+                item.close();
 
-            }
+            });
+            sentNotifications = [];
+
+            var notification = new Notification('گفت و گوی بر خط بازارسو', {
+                tag: "message_" + guid,
+                body: "شما " + $rootScope.msgCount() + " پیام خوانده نشده دارید !"
+            });
+
+            notification.onclick = function () {
+
+
+                $location.path('/chat');
+
+            };
+
+            sentNotifications.push(notification);
+
+        }
 
         // console.log("broadcastMessage", userId, message, date);
 
