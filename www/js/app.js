@@ -1455,10 +1455,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
     
 
-        if ($location.path() != '/chat')
-            if ("Notification" in window) {
-
-                cordova.plugins.backgroundMode.wakeUp();
+        if ($location.path() != '/chat'){
 
                 var notification = new Notification(username, {
                     tag: "message_" + guid,
