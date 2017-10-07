@@ -53,6 +53,18 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
+    cordova.plugins.notification.local.hasPermission(function (granted) {
+        alert(granted);
+
+        console.log(granted);
+
+        cordova.plugins.notification.local.schedule({
+            title :'Hello',
+            text: "Delayed Notification",
+        });
+    });
+
+  
 
     $('body').addClass('phonegap').addClass(device.platform);
     phoneService = {};

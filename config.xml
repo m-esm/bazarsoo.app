@@ -19,6 +19,9 @@
   <plugin name="cordova-plugin-vibration" source="npm" spec="~2.1.0" />
   <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1" />
 
+  <gap:plugin name="de.appplant.cordova.plugin.local-notification" />
+
+
   <platform name="android">
     <icon density="ldpi" src="www/res/icon/android/drawable-ldpi-icon.png" />
     <icon density="mdpi" src="www/res/icon/android/drawable-mdpi-icon.png" />
@@ -103,5 +106,4 @@
     <allow-intent href="itms:*" />
     <allow-intent href="itms-apps:*" />
   </platform>
-
 </widget>

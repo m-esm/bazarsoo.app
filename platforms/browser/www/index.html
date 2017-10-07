@@ -69,7 +69,7 @@
 
                 <div class="input-group">
                     <i class="fa fa-at"></i>
-                    <input name="email" type="email" required placeholder="آدرس ایمیل" ng-model="loginModel.userName" />
+                    <input name="username" type="text" required placeholder="ایمیل یا شماره موبایل" ng-model="loginModel.userName" />
                 </div>
 
                 <div class="input-group">
@@ -77,7 +77,7 @@
                     <input name="password" type="password" required placeholder="رمز عبور" ng-model="loginModel.password" />
                 </div>
                 <div class="error rtl" ng-hide="!error">
-                    ایمیل و یا رمز وارد شده صحیح نمی باشد .
+                    نام کاربری و یا رمز وارد شده صحیح نمی باشد .
                 </div>
                 <button ng-disabled="!loginForm.$valid" class="login" ng-click="login()">
                     ورود
@@ -93,9 +93,10 @@
                     </a>
                     |
                     <a class="forgot" id="confirmPassword" >
-                        فعال سازی ایمیل
+                        فعال سازی اکانت
                     </a>
-
+                    |
+                    <a class="forgot" id="changePasswordWithCode"> تغییر رمز با کد</a>
                 </div>
             </form>
             <form ng-show="showForm == 'register'" name="registerForm">
@@ -107,7 +108,7 @@
 
                 <div class="input-group">
                     <i class="fa fa-at"></i>
-                    <input name="email" type="email" required placeholder="آدرس ایمیل" ng-model="registerModel.email" />
+                    <input name="Username" type="text" required placeholder="ایمیل یا شماره موبایل" ng-model="registerModel.Username" />
                 </div>
 
                 <div class="input-group">
@@ -135,8 +136,12 @@
                     </a>
                     |
                     <a class="forgot" id="confirmPassword">
-                        فعال سازی ایمیل
+                        فعال سازی اکانت
                     </a>
+                    |
+                    <a class="forgot" id="changePasswordWithCode"> تغییر رمز با کد</a>
+
+
                 </div>
             </form>
         </div>

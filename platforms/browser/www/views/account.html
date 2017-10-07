@@ -110,6 +110,18 @@
 
         <form id="myprofile">
 
+            <div class="sp-pic">
+
+                <img class="avatar" id="avatar" src="{{getUser().ImageUrl ? getUser().ImageUrl :'http://bazarsoo.com/Plugins/Vitrin/Repository/Images/defaultIcon.png'}}" />
+                <a class="btn btn-success btn-sm">
+                    <i class="fa fa-check"></i>
+                    ذخیره
+                </a>
+                <input type="file" fileread="user.avatar_file" />
+
+            </div>
+
+
 
             <div class="input-field">
                 <label>نام</label> <input name="FirstName" type="text" ng-model="user.FirstName" />

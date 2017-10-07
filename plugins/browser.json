@@ -66,6 +66,9 @@
         },
         "phonegap-plugin-local-notification": {
             "PACKAGE_NAME": "com.bazarsoo.app"
+        },
+        "de.appplant.cordova.plugin.local-notification": {
+            "PACKAGE_NAME": "com.bazarsoo.app"
         }
     },
     "dependent_plugins": {
@@ -74,6 +77,9 @@
         },
         "cordova-plugin-file": {
             "PACKAGE_NAME": "com.comon"
+        },
+        "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "com.bazarsoo.app"
         }
     }
 }
