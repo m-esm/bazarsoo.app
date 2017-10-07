@@ -1497,7 +1497,8 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                             tag: "message_" + _msgCount,
                             body: "شما " + _msgCount + " پیام خوانده نشده دارید !"
                         });
-                        phoneService.vibrate(100);
+                        phoneService.vibrate(200);
+                        phoneService.vibrate(200);
                         notification.onclick = function () {
 
                             $location.path('/chat');
