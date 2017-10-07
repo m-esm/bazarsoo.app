@@ -1467,42 +1467,50 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
     });
 
 
+    var lastNotifyTimeout = 0;
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
 
-
+   
         if ($location.path() != '/chat') {
 
-            sentNotifications.forEach(function (item, index) {
+            clearTimeout(lastNotifyTimeout);
 
-                item.close();
+            lastNotifyTimeout = setTimeout(function () {
 
-            });
-            sentNotifications = [];
-            $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
-           
-                if (Array.isArray(res.data)) {
+                sentNotifications.forEach(function (item, index) {
+                    item.close();
+                });
 
-                  var msgCount = function () {
-                        return _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
-                    };
+                sentNotifications = [];
+                $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
 
-                  var notification = new Notification('گفت و گوی بر خط بازارسو', {
-                      tag: "message_" + guid,
-                      body: "شما " + msgCount() + " پیام خوانده نشده دارید !"
-                  });
 
-                  notification.onclick = function () {
+                    if (Array.isArray(res.data)) {
 
-                      $location.path('/chat');
+                        var _msgCount = _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
 
-                  };
 
-                  sentNotifications.push(notification);
-                }
+                        var notification = new Notification('گفت و گوی بر خط بازارسو', {
+                            tag: "message_" + _msgCount,
+                            body: "شما " + _msgCount + " پیام خوانده نشده دارید !"
+                        });
 
-            }, function () {
-            });
+                        notification.onclick = function () {
+
+                            $location.path('/chat');
+
+                        };
+
+                        sentNotifications.push(notification);
+                    }
+
+
+                }, function () {
+                });
+
+            }, 2000);
+
 
 
          

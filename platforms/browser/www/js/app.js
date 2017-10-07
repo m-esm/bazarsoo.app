@@ -56,12 +56,29 @@ apiBase = 'http://bazarsoo.com';
 
 function onDeviceReady() {
 
-   // cordova.plugins.backgroundMode.enable();
-  //  cordova.plugins.backgroundMode.overrideBackButton();
-   // cordova.plugins.backgroundMode.excludeFromTaskList();
+    cordova.plugins.backgroundMode.setDefaults({ silent: true })
+    cordova.plugins.backgroundMode.configure({})
 
-    //Notification.requestPermission(function (permission) {
+    cordova.plugins.backgroundMode.on('activate', function () {
+        cordova.plugins.backgroundMode.disableWebViewOptimizations();
+    });
 
+    cordova.plugins.backgroundMode.on('deactivate', function () {
+        cordova.plugins.backgroundMode.enableWebViewOptimizations();
+    });
+
+    cordova.plugins.backgroundMode.on('enable', function () {
+    });
+
+
+    cordova.plugins.backgroundMode.overrideBackButton();
+    cordova.plugins.backgroundMode.excludeFromTaskList();
+
+    cordova.plugins.backgroundMode.enable();
+
+    Notification.requestPermission(function (permission) {
+
+    });
     //    if (permission === "granted") {
     //        var notification = new Notification("My title", {
     //            tag: "message1", 
@@ -1449,32 +1466,48 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     });
 
- 
+
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
-    
-
-        if ($location.path() != '/chat')
-            if ("Notification" in window) {
-
-                cordova.plugins.backgroundMode.wakeUp();
-
-                var notification = new Notification(username, {
-                    tag: "message_" + guid,
-                    body: message.MessageDescrp
-                });
-
-                notification.onshow = function () {
 
 
-                    $location.path('/chat');
-                    $location.hash(userId);
+        if ($location.path() != '/chat') {
 
-                };
+            sentNotifications.forEach(function (item, index) {
 
-                sentNotifications.push(notification);
+                item.close();
 
-            }
+            });
+            sentNotifications = [];
+            $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
+           
+                if (Array.isArray(res.data)) {
+
+                  var msgCount = function () {
+                        return _.reduce(res.data, function (memo, item) { return memo + item.count; }, 0);
+                    };
+
+                  var notification = new Notification('گفت و گوی بر خط بازارسو', {
+                      tag: "message_" + guid,
+                      body: "شما " + msgCount() + " پیام خوانده نشده دارید !"
+                  });
+
+                  notification.onclick = function () {
+
+                      $location.path('/chat');
+
+                  };
+
+                  sentNotifications.push(notification);
+                }
+
+            }, function () {
+            });
+
+
+         
+
+        }
 
         // console.log("broadcastMessage", userId, message, date);
 
