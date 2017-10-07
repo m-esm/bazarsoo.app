@@ -57,8 +57,8 @@ apiBase = 'http://bazarsoo.com';
 function onDeviceReady() {
 
     cordova.plugins.backgroundMode.enable();
-    cordova.plugins.backgroundMode.overrideBackButton();
-    cordova.plugins.backgroundMode.excludeFromTaskList();
+  //  cordova.plugins.backgroundMode.overrideBackButton();
+   // cordova.plugins.backgroundMode.excludeFromTaskList();
 
     //Notification.requestPermission(function (permission) {
 
@@ -1923,6 +1923,13 @@ bazarsooAng.controller('searchController', function ($scope, $location, $mdConst
 
 
 bazarsooAng.controller('chatController', function ($scope, $http, $timeout, $q, $rootScope, $window, $location) {
+
+    sentNotifications.forEach(function (item, index) {
+
+        item.close();
+
+    });
+    sentNotifications = [];
 
     $scope.calcPriceFields = function (item, field) {
 
