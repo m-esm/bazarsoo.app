@@ -58,10 +58,11 @@ function onDeviceReady() {
 
     cordova.plugins.backgroundMode.enable();
     cordova.plugins.backgroundMode.overrideBackButton();
-   // cordova.plugins.backgroundMode.excludeFromTaskList();
+     cordova.plugins.backgroundMode.excludeFromTaskList();
 
-    //Notification.requestPermission(function (permission) {
+     Notification.requestPermission(function (permission) {
 
+     });
     //    if (permission === "granted") {
     //        var notification = new Notification("My title", {
     //            tag: "message1", 
