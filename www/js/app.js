@@ -57,13 +57,13 @@ function onDeviceReady() {
 
     Notification.requestPermission(function (permission) {
 
-        console.log('permission !!!!!!!!!',permission);
-        // If the user accepts, let’s create a notification
         if (permission === "granted") {
             var notification = new Notification("My title", {
                 tag: "message1", 
                 body: "My body" 
-            }); 
+            });
+
+
             notification.onshow  = function() { console.log("show"); };
             notification.onclose = function() { console.log("close"); };
             notification.onclick = function() { console.log("click"); };
@@ -1447,7 +1447,19 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
 
+        var notification = new Notification(username, {
+            tag: "message_" + guid,
+            body: message
+        });
 
+        notification.onshow = function () {
+
+
+            $location.path('/chat');
+            $location.hash(userId);
+
+        };
+    
 
         // console.log("broadcastMessage", userId, message, date);
 
