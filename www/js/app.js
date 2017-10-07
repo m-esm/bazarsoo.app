@@ -1462,7 +1462,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                     body: message.MessageDescrp
                 });
 
-                notification.onshow = function () {
+                notification.onclick = function () {
 
 
                     $location.path('/chat');
