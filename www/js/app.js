@@ -1471,19 +1471,21 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
 
     chub.on("broadcastMessage", function (userId, message, username, date, guid) {
 
-   
+
         if ($location.path() != '/chat') {
 
             clearTimeout(lastNotifyTimeout);
 
             lastNotifyTimeout = setTimeout(function () {
 
-                sentNotifications.forEach(function (item, index) {
-                    item.close();
-                });
 
-                sentNotifications = [];
                 $http.get(apiBase + '/onlinechat/chat/ContactHistory').then(function (res) {
+
+                    sentNotifications.forEach(function (item, index) {
+                        item.close();
+                    });
+
+                    sentNotifications = [];
 
 
                     if (Array.isArray(res.data)) {
@@ -1495,7 +1497,7 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                             tag: "message_" + _msgCount,
                             body: "شما " + _msgCount + " پیام خوانده نشده دارید !"
                         });
-
+                        phoneService.vibrate(100);
                         notification.onclick = function () {
 
                             $location.path('/chat');
@@ -1509,11 +1511,11 @@ bazarsooAng.run(function ($location, $rootScope, $timeout, $http, $q, $window, u
                 }, function () {
                 });
 
-            }, 2000);
+            }, 3000);
 
 
 
-         
+
 
         }
 
